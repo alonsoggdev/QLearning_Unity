@@ -1,0 +1,812 @@
+[
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 0,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 1,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 2,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 3,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 4,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 5,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 6,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 7,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 8,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 0,
+    "Column": 9,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 1,
+    "Column": 0,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "S",
+    "Row": 1,
+    "Column": 1,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 1,
+    "Column": 2,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 1,
+    "Column": 3,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 1,
+    "Column": 4,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 1,
+    "Column": 5,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 1,
+    "Column": 6,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 1,
+    "Column": 7,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "X",
+    "Row": 1,
+    "Column": 8,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 1,
+    "Column": 9,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 2,
+    "Column": 0,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 2,
+    "Column": 1,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 2,
+    "Column": 2,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 2,
+    "Column": 3,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 2,
+    "Column": 4,
+    "Up": true,
+    "Down": true,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 2,
+    "Column": 5,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 2,
+    "Column": 6,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 2,
+    "Column": 7,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 2,
+    "Column": 8,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 2,
+    "Column": 9,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 3,
+    "Column": 0,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 3,
+    "Column": 1,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 3,
+    "Column": 2,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 3,
+    "Column": 3,
+    "Up": true,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 3,
+    "Column": 4,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 3,
+    "Column": 5,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 3,
+    "Column": 6,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 3,
+    "Column": 7,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 3,
+    "Column": 8,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 3,
+    "Column": 9,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 4,
+    "Column": 0,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 4,
+    "Column": 1,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 4,
+    "Column": 2,
+    "Up": true,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 4,
+    "Column": 3,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 4,
+    "Column": 4,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 4,
+    "Column": 5,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 4,
+    "Column": 6,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 4,
+    "Column": 7,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 4,
+    "Column": 8,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 4,
+    "Column": 9,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 5,
+    "Column": 0,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 5,
+    "Column": 1,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 5,
+    "Column": 2,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "G",
+    "Row": 5,
+    "Column": 3,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 5,
+    "Column": 4,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 5,
+    "Column": 5,
+    "Up": true,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 5,
+    "Column": 6,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 5,
+    "Column": 7,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 5,
+    "Column": 8,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 5,
+    "Column": 9,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 6,
+    "Column": 0,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 6,
+    "Column": 1,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 6,
+    "Column": 2,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 6,
+    "Column": 3,
+    "Up": false,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 6,
+    "Column": 4,
+    "Up": true,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 6,
+    "Column": 5,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 6,
+    "Column": 6,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 6,
+    "Column": 7,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 6,
+    "Column": 8,
+    "Up": true,
+    "Down": true,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 6,
+    "Column": 9,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 7,
+    "Column": 0,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 7,
+    "Column": 1,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 7,
+    "Column": 2,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 7,
+    "Column": 3,
+    "Up": true,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 7,
+    "Column": 4,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 7,
+    "Column": 5,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 7,
+    "Column": 6,
+    "Up": true,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 7,
+    "Column": 7,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": true
+  },
+  {
+    "Type": "0",
+    "Row": 7,
+    "Column": 8,
+    "Up": true,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 7,
+    "Column": 9,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 0,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 1,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 2,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 3,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 4,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 5,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 6,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 7,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 8,
+    "Up": true,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 8,
+    "Column": 9,
+    "Up": false,
+    "Down": false,
+    "Left": false,
+    "Right": false
+  }
+]
