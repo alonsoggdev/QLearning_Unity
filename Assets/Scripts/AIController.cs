@@ -7,20 +7,20 @@ public class AIController : MonoBehaviour
 
     Matrix matrix;
 
-    enum Algorithm
-    {
-        SARSA,
-        QLEARNING
-    }
-
     public void Start()
     {
         matrix = new Matrix();
 
-        Algorithm algorithm = Algorithm.SARSA;
+        GameManager.Algorithm algorithm = GameManager.Algorithm.SARSA;
     }
 
-    public void Execute()
+    public void SARSA()
+    {
+        Debug.Log("Ejecutando SARSA");
+        
+    }
+
+    public void QLearning()
     {
         
     }

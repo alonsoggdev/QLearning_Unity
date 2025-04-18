@@ -5,12 +5,17 @@ using UnityEngine.UI;
 
 public class CanvasManager : MonoBehaviour
 {
+    private GameManager gameManager;
+
     [Header("Input Fields")]
     public InputField learningRate;
     public InputField discountFactor;
     public InputField goalAward;
     public InputField movementAward;
     public InputField giftAward;
+
+    [Header("Dropdowns")]
+    public Dropdown algorithmDropdown;
 
     [Header("Range Configuration")]
     public int minLearningRate = 1;
@@ -31,6 +36,16 @@ public class CanvasManager : MonoBehaviour
     [Header("Colors")]
     public Color validColor = Color.white;
     public Color invalidColor = new Color(1f, 0.6f, 0.6f);
+
+    void Start()
+    {
+        gameManager = GameManager.Instance;
+
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager.Instance no encontrado desde CanvasManager");
+        }
+    }
 
     public bool CheckInputs()
     {
@@ -69,7 +84,7 @@ public class CanvasManager : MonoBehaviour
     {
         if (CheckInputs())
         {
-            
+            gameManager.ExecuteAI(algorithmDropdown.value);
         }
         else
         {
