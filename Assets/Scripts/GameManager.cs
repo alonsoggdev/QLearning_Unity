@@ -5,11 +5,11 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     bool isExecuting = true;
-    AIController AIController;
+    [SerializeField] private AIController AIController;
 
     void Awake()
     {
-        AIController = new AIController();
+        
     }
     
     void Start()
