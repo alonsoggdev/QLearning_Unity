@@ -165,7 +165,7 @@ public class Matrix
 
         // Set X at the initial position
         this.set_board_value(current_position[0], current_position[1], 'X');
-
+        this.save_board(current_episode, step);
     }
 
     public void save_board(int episode, int step) 
@@ -173,7 +173,7 @@ public class Matrix
         string data_folder = Path.Combine(Application.dataPath, "Data");
         string path = Path.Combine(data_folder, "Matrix_Save.txt");
 
-        Debug.Log("Ruta absoluta: " + Path.GetFullPath(path));
+        // Debug.Log("Ruta absoluta: " + Path.GetFullPath(path));
         try
         {
             using (StreamWriter writer = new StreamWriter(path, append: true))
@@ -188,7 +188,7 @@ public class Matrix
                     writer.WriteLine();
                 }
             }
-            Debug.Log("Matriz guardada correctamente.");
+            // Debug.Log("Matriz guardada correctamente.");
         }
         catch (Exception ex)
         {
@@ -229,6 +229,20 @@ public class Matrix
         File.Create(path).Close();
     }
 
+    public void print_board()
+    {
+        Debug.Log("------------------------------");
+        Debug.Log("Has creado la sieguiente matriz");
+        for (int i = 0; i < m_rows; i++)
+        {
+            for (int j = 0; j < m_columns; j++)
+            {
+                Debug.Log(m_board[i, j] + " ");
+            }
+            Debug.Log("");
+        }
+    }
+
     public void find_start_and_goal_positions(char[,] board)
     {
         int[] start = new int[2] { -1, -1};
@@ -251,5 +265,29 @@ public class Matrix
 
         m_start = start;
         m_goal = goal;
+    }
+
+    public void mark_cell_as_visited(int row, int col)
+    {
+        GameObject cell = GameObject.Find($"{row}-{col}");
+
+        if (cell == null)
+        {
+            Debug.LogError($"No se encontró la celda en la posición ({row}, {col})");
+            return;
+        }
+
+        if (row >= 0 && row < m_rows && col >= 0 && col < m_columns)
+        {
+            SpriteRenderer spriteRenderer = cell.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = Color.green;
+            }
+            else
+            {
+                Debug.LogError($"No se encontró el componente SpriteRenderer en la celda ({row}, {col})");
+            }
+        }
     }
 }

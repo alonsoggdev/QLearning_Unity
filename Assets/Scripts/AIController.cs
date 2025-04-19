@@ -22,54 +22,54 @@ public class AIController : MonoBehaviour
     int[] current_position;
 
     GameManager.Algorithm algorithm;
-    private int           learning_rate;
-    private int           discount_factor;
-    private int           goal_award;
-    private int           movement_award;
-    private int           gift_award;
+    private float           learning_rate;
+    private float           discount_factor;
+    private float           goal_award;
+    private float           movement_award;
+    private float           gift_award;
 
     public void set_algorithm(int algorithm)
     {
         this.algorithm = (GameManager.Algorithm)algorithm;
     }
 
-    public void set_learning_rate(int learning_rate)
+    public void set_learning_rate(float learning_rate)
     {
         this.learning_rate = learning_rate;
     }
 
-    public void set_discount_factor(int discount_factor)
+    public void set_discount_factor(float discount_factor)
     {
         this.discount_factor = discount_factor;
     }
 
-    public void set_goal_award(int goal_award)
+    public void set_goal_award(float goal_award)
     {
         this.goal_award = goal_award;
     }
 
-    public void set_movement_award(int movement_award)
+    public void set_movement_award(float movement_award)
     {
         this.movement_award = movement_award;
     }
 
-    public void set_gift_award(int gift_award)
+    public void set_gift_award(float gift_award)
     {
         this.gift_award = gift_award;
     }
 
 
     [Header("SARSA Parameters")]
-    int episodes    = 1000; // Number of episodes
+    int episodes    = 10; // Number of episodes
     float epsilon   = 0.6f; // Exploration rate
 
     // Control parameters for saving
     bool save_all_movements = false;    // Set to true if you want to save every movement (warning: creates large files)
-    int save_frequency      = 100;      // Save movements for every Nth episode
+    int save_frequency      = 1;      // Save movements for every Nth episode
 
     // Track when the first successful path is found
-    int first_success_episode   = -1;
-    int first_success_steps     = -1;
+    List<int> success_episodes = new List<int>();
+    List<int> success_steps = new List<int>();
 
     enum Action
     {
@@ -112,6 +112,9 @@ public class AIController : MonoBehaviour
             bool done = false;
             int steps = 0;
             int max_steps = m_rows * m_columns * 2; // Arbitrary limit to prevent infinite loops
+            
+            Debug.Log("STARTING EPISODE " + (e + 1) + " with state: " + state + " and action: " + action);
+            Debug.Log(current_position[0] + " " + current_position[1]);
 
             while (!done && steps < max_steps)
             {
@@ -122,11 +125,11 @@ public class AIController : MonoBehaviour
                 if (next_row == goal_position[0] && next_col == goal_position[1])
                 {
                     done = true;
-                    if (first_success_episode == -1)
-                    {
-                        first_success_episode = e + 1;
-                        first_success_steps = steps + 1;
-                    }
+
+                    int success_episode = e + 1;
+                    int success_step = steps + 1;
+                    success_episodes.Add(success_episode);
+                    success_steps.Add(success_step);
                 }
 
                 int next_action = epsilon_greedy_action(next_state, epsilon);
@@ -175,13 +178,13 @@ public class AIController : MonoBehaviour
 
         Debug.Log("SARSA training completed.");
 
-        if (first_success_episode != -1)
+        if (success_episodes.Count > 0)
         {
-            Debug.Log($"First successful path found in episode {first_success_episode} with {first_success_steps} steps.");
+            print_successful_paths();
         }
         else
         {
-            Debug.Log("No successful path found.");
+            Debug.Log("No successful paths found.");
         }
 
         // Save the final Q-table
@@ -194,6 +197,14 @@ public class AIController : MonoBehaviour
     public void QLearning()
     {
         
+    }
+
+    void print_successful_paths()
+    {
+        for (int i = 0; i < success_episodes.Count; i++)
+        {
+            Debug.Log($"Episode: {success_episodes[i]}, Steps: {success_steps[i]}");
+        }
     }
 
     void set_matrix() //? Initialize the matrix and get board dimensions
@@ -390,9 +401,11 @@ public class AIController : MonoBehaviour
 
             // Take the best action
             m_matrix.set_board_value(current_position[0], current_position[1], '0'); // Clear current position
-            float _ = take_action(m_matrix.get_board(), best_action, out int nextRow, out int nextCol);
+            float action = take_action(m_matrix.get_board(), best_action, out int nextRow, out int nextCol);
             current_position[0] = nextRow;
             current_position[1] = nextCol;
+
+            Debug.Log($"({current_position[0]}, {current_position[1]})");
 
             // Check if reached goal
             if (current_position[0] == goal_position[0] && current_position[1] == goal_position[1])
@@ -404,7 +417,9 @@ public class AIController : MonoBehaviour
 
             // Mark new position
             m_matrix.set_board_value(current_position[0], current_position[1], 'X');
+            // m_matrix.print_board();
             m_matrix.save_board(1000, steps);
+            m_matrix.mark_cell_as_visited(current_position[0], current_position[1]);
 
             // Sleep to visualize the movement //TODO
 

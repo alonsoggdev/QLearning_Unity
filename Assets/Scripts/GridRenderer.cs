@@ -31,7 +31,10 @@ public class GridRenderer : MonoBehaviour
                 GameObject prefabToInstantiate = GetPrefabForCell(cellType);
                 if (prefabToInstantiate != null)
                 {
-                    Instantiate(prefabToInstantiate, position, Quaternion.identity, this.transform);
+                    GameObject cell = Instantiate(prefabToInstantiate, position, Quaternion.identity, this.transform);
+
+                    cell.name = $"{row}-{col}";
+                    cell.tag = $"{cellType}";
                 }
             }
         }

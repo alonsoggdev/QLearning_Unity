@@ -24,14 +24,14 @@ public class CanvasManager : MonoBehaviour
     public int minDiscountFactor = 1;
     public int maxDiscountFactor = 10;
 
-    public int minGoalAward = 1;
-    public int maxGoalAward = 10;
+    public int minGoalAward = 0;
+    public int maxGoalAward = 0;
 
-    public int minMovementAward = 1;
-    public int maxMovementAward = 10;
+    public int minMovementAward = 0;
+    public int maxMovementAward = 0;
 
-    public int minGiftAward = 1;
-    public int maxGiftAward = 10;
+    public int minGiftAward = 0;
+    public int maxGiftAward = 0;
 
     [Header("Colors")]
     public Color validColor = Color.white;
@@ -51,11 +51,11 @@ public class CanvasManager : MonoBehaviour
 
     void set_default_values()
     {
-        learningRate.text = "5";
-        discountFactor.text = "5";
-        goalAward.text = "5";
-        movementAward.text = "5";
-        giftAward.text = "5";
+        learningRate.text = "2";
+        discountFactor.text = "9";
+        goalAward.text = "100";
+        movementAward.text = "-1";
+        giftAward.text = "15";
 
         algorithmDropdown.value = 0;
     }
@@ -100,11 +100,11 @@ public class CanvasManager : MonoBehaviour
 
             gameManager.SetAlgorithmValues(
                 algorithmDropdown.value,
-                int.Parse(learningRate.text),
-                int.Parse(discountFactor.text),
-                int.Parse(goalAward.text),
-                int.Parse(movementAward.text),
-                int.Parse(giftAward.text)
+                float.Parse(learningRate.text),
+                float.Parse(discountFactor.text),
+                float.Parse(goalAward.text),
+                float.Parse(movementAward.text),
+                float.Parse(giftAward.text)
             );
             gameManager.ExecuteAI(algorithmDropdown.value);
         }
