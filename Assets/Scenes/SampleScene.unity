@@ -3421,6 +3421,7 @@ MonoBehaviour:
   goalAward: {fileID: 69738601}
   movementAward: {fileID: 1974051009}
   giftAward: {fileID: 1386690940}
+  algorithmDropdown: {fileID: 1110312615}
   minLearningRate: 1
   maxLearningRate: 10
   minDiscountFactor: 1

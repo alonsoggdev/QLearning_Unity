@@ -45,6 +45,19 @@ public class CanvasManager : MonoBehaviour
         {
             Debug.LogError("GameManager.Instance no encontrado desde CanvasManager");
         }
+
+        set_default_values();
+    }
+
+    void set_default_values()
+    {
+        learningRate.text = "5";
+        discountFactor.text = "5";
+        goalAward.text = "5";
+        movementAward.text = "5";
+        giftAward.text = "5";
+
+        algorithmDropdown.value = 0;
     }
 
     public bool CheckInputs()
@@ -84,6 +97,15 @@ public class CanvasManager : MonoBehaviour
     {
         if (CheckInputs())
         {
+
+            gameManager.SetAlgorithmValues(
+                algorithmDropdown.value,
+                int.Parse(learningRate.text),
+                int.Parse(discountFactor.text),
+                int.Parse(goalAward.text),
+                int.Parse(movementAward.text),
+                int.Parse(giftAward.text)
+            );
             gameManager.ExecuteAI(algorithmDropdown.value);
         }
         else
