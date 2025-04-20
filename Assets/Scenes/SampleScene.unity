@@ -1790,7 +1790,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74ac7cd8830fa414799a339edbc6326d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  episodes: 100
+  avoidLoops: 1
+  stepDelay: 0.001
+  episodes: 1000
   epsilon: 0.6
 --- !u!4 &921551953
 Transform:

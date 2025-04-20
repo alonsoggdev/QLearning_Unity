@@ -65,7 +65,7 @@ public class AIController : MonoBehaviour
 
 
     [Header("SARSA Parameters")]
-    [SerializeField]int episodes    = 10; // Number of episodes
+    [SerializeField]int episodes    = 1000; // Number of episodes
     [SerializeField]float epsilon   = 0.6f; // Exploration rate
 
     // Control parameters for saving
@@ -96,6 +96,11 @@ public class AIController : MonoBehaviour
     void Start()
     {
         m_matrix = new Matrix();
+    }
+
+    System.Collections.IEnumerator QLearning_Coroutine()
+    {
+        yield return new WaitForSeconds(0.1f);
     }
 
     System.Collections.IEnumerator SARSA_Coroutine()
@@ -160,7 +165,7 @@ public class AIController : MonoBehaviour
                         // Si el estado actual ya está en la lista de los últimos estados visitados
                         if (visited_states[visited_states.Count - 2] == next_state && visited_states[visited_states.Count - 1] == state)
                         {
-                            Debug.Log("Ciclo infinito detectado. Finalizando episodio.");
+                            // Debug.Log("Ciclo infinito detectado. Finalizando episodio.");
                             done = true;
                             break;
                         }
@@ -190,15 +195,18 @@ public class AIController : MonoBehaviour
                 float current_q = qTable[state, action];
                 float next_q = qTable[next_state, next_action];
 
+                // Update Q-value
+                qTable[state, action] = current_q + learning_rate * (reward + discount_factor * next_q - current_q);
+
                 // If it hits a wall {} else {} 
-                if (reward == -1 && next_row == current_position[0] && next_col == current_position[1])
-                {
-                    qTable[state, action] = current_q + learning_rate * (reward - current_q);
-                }
-                else
-                {
-                    qTable[state, action] = current_q + learning_rate * (reward + discount_factor * next_q - current_q);
-                }
+                // if (reward == -1 && next_row == current_position[0] && next_col == current_position[1])
+                // {
+                //     qTable[state, action] = current_q + learning_rate * (reward - current_q);
+                // }
+                // else
+                // {
+                    // qTable[state, action] = current_q + learning_rate * (reward + discount_factor * next_q - current_q);
+                // }
 
                 // Update current state and action
                 state = next_state;
@@ -257,7 +265,7 @@ public class AIController : MonoBehaviour
 
     public void QLearning()
     {
-        
+        StartCoroutine(QLearning_Coroutine());
     }
 
     void print_successful_paths()
@@ -445,8 +453,7 @@ public class AIController : MonoBehaviour
         m_matrix.reset_to_starting_cell(current_position, 1000, 0);
 
         int steps = 0;
-        // int max_steps = m_rows * m_columns * 2;
-        int max_steps = 1000; // Arbitrary limit to prevent infinite loops
+        int max_steps = m_rows * m_columns * 2;
         bool reached_goal = false;
 
         while (steps < max_steps)
@@ -459,7 +466,6 @@ public class AIController : MonoBehaviour
 
             for (int a = 0; a < 4; a++)
             {
-                Debug.Log($"State: {state}, Action: {(Action)a}, Q-Value: {qTable[state, a]}");
                 if (qTable[state, a] > best_value)
                 {
                     best_value = qTable[state, a];
