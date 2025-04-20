@@ -149,9 +149,8 @@ public class Matrix
         return board;
     }
 
-    public void reset_to_initial_position(int[] current_position, int current_episode, int step)
+    void clear_x_position(int[] current_position)
     {
-        // Clear previous X position
         for (int i = 0; i < m_rows; i++)
         {
             for (int j = 0; j < m_columns; j++)
@@ -162,9 +161,23 @@ public class Matrix
                 }
             }
         }
+    }
+
+    public void reset_to_initial_position(int[] current_position, int current_episode, int step)
+    {
+        clear_x_position(current_position);
 
         // Set X at the initial position
         this.set_board_value(current_position[0], current_position[1], 'X');
+        this.save_board(current_episode, step);
+    }
+
+    public void reset_to_starting_cell(int[] current_position, int current_episode, int step)
+    {
+        clear_x_position(current_position);
+
+        // Set X at the starting position
+        this.set_board_value(m_start[0], m_start[1], 'X');
         this.save_board(current_episode, step);
     }
 
@@ -269,6 +282,41 @@ public class Matrix
 
     public void mark_cell_as_visited(int row, int col)
     {
+        mark_cell(row, col, 2);
+    }
+
+    public void mark_cell_as_checked(int row, int col)
+    {
+        mark_cell(row, col, 1);
+    }
+
+    public void mark_cell_as_default(int row, int col)
+    {
+        mark_cell(row, col, 0);
+    }
+
+    public void reset_cells_color()
+    {
+        for (int i = 0; i < m_rows; i++)
+        {
+            for (int j = 0; j < m_columns; j++)
+            {
+                GameObject cell = GameObject.Find($"{i}-{j}");
+                if (cell == null)
+                {
+                    Debug.LogError($"No se encontró la celda en la posición ({i}, {j})");
+                    continue;
+                }
+                if (cell.tag != "1")
+                {
+                    mark_cell_as_default(i, j);
+                }
+            }
+        }
+    }
+
+    public void mark_cell(int row, int col, int type)
+    {
         GameObject cell = GameObject.Find($"{row}-{col}");
 
         if (cell == null)
@@ -282,12 +330,30 @@ public class Matrix
             SpriteRenderer spriteRenderer = cell.GetComponent<SpriteRenderer>();
             if (spriteRenderer != null)
             {
-                spriteRenderer.color = Color.green;
+                switch (type)
+                {
+                    case 0:
+                        spriteRenderer.color = Color.white;
+                        break;
+                    case 1:
+                        spriteRenderer.color = new Color(0.6f, 0.8f, 1f);
+                        break;
+                    case 2:
+                        spriteRenderer.color = new Color(0.4f, 1f, 0.6f);
+                        break;
+                    default:
+                        Debug.LogError($"Tipo de celda no válido: {type}");
+                        break;
+                }
             }
             else
             {
                 Debug.LogError($"No se encontró el componente SpriteRenderer en la celda ({row}, {col})");
             }
+        }
+        else
+        {
+            Debug.LogError($"Índices fuera de rango: ({row}, {col})");
         }
     }
 }

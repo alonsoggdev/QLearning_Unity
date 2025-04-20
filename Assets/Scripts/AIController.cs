@@ -9,6 +9,8 @@ using UnityEngine;
 
 public class AIController : MonoBehaviour
 {
+    bool    avoid_loops = false; //? Set to true to avoid infinite loops
+    float   step_delay = 0.001f; //? Delay between steps in seconds
 
     private System.Random rand = new System.Random();
 
@@ -21,7 +23,9 @@ public class AIController : MonoBehaviour
     int[] goal_position;
     int[] current_position;
 
-    GameManager.Algorithm algorithm;
+    CanvasManager canvasManager;
+
+    GameManager.Algorithm   algorithm;
     private float           learning_rate;
     private float           discount_factor;
     private float           goal_award;
@@ -60,8 +64,8 @@ public class AIController : MonoBehaviour
 
 
     [Header("SARSA Parameters")]
-    int episodes    = 10; // Number of episodes
-    float epsilon   = 0.6f; // Exploration rate
+    [SerializeField]int episodes    = 10; // Number of episodes
+    [SerializeField]float epsilon   = 0.6f; // Exploration rate
 
     // Control parameters for saving
     bool save_all_movements = false;    // Set to true if you want to save every movement (warning: creates large files)
@@ -79,12 +83,21 @@ public class AIController : MonoBehaviour
         Right
     }
 
-    public void Start()
+    void Awake()
+    {
+        canvasManager = FindObjectOfType<CanvasManager>();
+        if (canvasManager == null)
+        {
+            Debug.LogError("CanvasManager not found in the scene.");
+        }
+    }
+
+    void Start()
     {
         m_matrix = new Matrix();
     }
 
-    public void SARSA()
+    System.Collections.IEnumerator SARSA_Coroutine()
     {
         set_matrix();
 
@@ -100,6 +113,8 @@ public class AIController : MonoBehaviour
 
         for (int e = 0; e < episodes; e++)
         {
+            canvasManager.set_episode_text(e + 1, episodes);
+            m_matrix.reset_cells_color();
             // Determine if we should save movements for this episode
             bool save_this_episode = save_all_movements || (e % save_frequency == 0) || (e == episodes - 1);
 
@@ -113,13 +128,36 @@ public class AIController : MonoBehaviour
             int steps = 0;
             int max_steps = m_rows * m_columns * 2; // Arbitrary limit to prevent infinite loops
             
-            Debug.Log("STARTING EPISODE " + (e + 1) + " with state: " + state + " and action: " + action);
-            Debug.Log(current_position[0] + " " + current_position[1]);
+            // Debug.Log("STARTING EPISODE " + (e + 1) + " with state: " + state + " and action: " + action);
+            // Debug.Log(current_position[0] + " " + current_position[1]);
+
+            // Agregar una lista para rastrear las últimas posiciones visitadas
+            List<int> visited_states = new List<int>();
+            int cycle_check_limit = 4;
 
             while (!done && steps < max_steps)
             {
                 float reward = take_action(m_matrix.get_board(), action, out int next_row, out int next_col);
                 int next_state = next_row * m_columns + next_col;
+
+                // Verificar si estamos en un ciclo infinito
+                if (avoid_loops)
+                {
+                    if (visited_states.Count >= cycle_check_limit)
+                    {
+                        // Si el estado actual ya está en la lista de los últimos estados visitados
+                        if (visited_states[visited_states.Count - 2] == next_state && visited_states[visited_states.Count - 1] == state)
+                        {
+                            Debug.Log("Ciclo infinito detectado. Finalizando episodio.");
+                            done = true;
+                            break;
+                        }
+
+                        visited_states.RemoveAt(0);
+                    }
+
+                    visited_states.Add(state);
+                }
 
                 // Check if we reached the goal
                 if (next_row == goal_position[0] && next_col == goal_position[1])
@@ -130,6 +168,7 @@ public class AIController : MonoBehaviour
                     int success_step = steps + 1;
                     success_episodes.Add(success_episode);
                     success_steps.Add(success_step);
+                    canvasManager.set_successful_paths_text(success_episodes.Count);
                 }
 
                 int next_action = epsilon_greedy_action(next_state, epsilon);
@@ -160,12 +199,16 @@ public class AIController : MonoBehaviour
                 current_position[1] = next_col;
                 m_matrix.set_board_value(current_position[0], current_position[1], 'X'); // Set new position
 
+                m_matrix.mark_cell_as_checked(current_position[0], current_position[1]);
+
                 if (save_this_episode)
                 {
                     m_matrix.save_board(e + 1, steps + 1);
                 }
 
                 steps++;
+                canvasManager.set_step_text(steps + 1, max_steps);
+                yield return new WaitForSeconds(step_delay); // Delay for visualization
             }
 
             // Display progress every 100 episodes
@@ -180,7 +223,8 @@ public class AIController : MonoBehaviour
 
         if (success_episodes.Count > 0)
         {
-            print_successful_paths();
+            Debug.Log("Successful paths found: " + success_episodes.Count);
+            // print_successful_paths();
         }
         else
         {
@@ -192,6 +236,11 @@ public class AIController : MonoBehaviour
 
         // Demonstrate the learned path
         demonstrate_learned_path(m_matrix.get_board());
+    }
+
+    public void SARSA()
+    {
+        StartCoroutine(SARSA_Coroutine());
     }
 
     public void QLearning()
@@ -376,7 +425,9 @@ public class AIController : MonoBehaviour
     {
         Debug.Log("Demonstrating learned path...");
 
-        m_matrix.reset_to_initial_position(current_position, 1000, 0);
+        current_position = new int[2] { start_position[0], start_position[1] };
+
+        m_matrix.reset_to_starting_cell(current_position, 1000, 0);
 
         int steps = 0;
         int max_steps = m_rows * m_columns * 2;
@@ -405,7 +456,8 @@ public class AIController : MonoBehaviour
             current_position[0] = nextRow;
             current_position[1] = nextCol;
 
-            Debug.Log($"({current_position[0]}, {current_position[1]})");
+            // Debug.Log($"({current_position[0]}, {current_position[1]})");
+            m_matrix.mark_cell_as_visited(current_position[0], current_position[1]);
 
             // Check if reached goal
             if (current_position[0] == goal_position[0] && current_position[1] == goal_position[1])
@@ -419,7 +471,6 @@ public class AIController : MonoBehaviour
             m_matrix.set_board_value(current_position[0], current_position[1], 'X');
             // m_matrix.print_board();
             m_matrix.save_board(1000, steps);
-            m_matrix.mark_cell_as_visited(current_position[0], current_position[1]);
 
             // Sleep to visualize the movement //TODO
 

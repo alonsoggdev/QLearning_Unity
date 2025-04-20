@@ -37,6 +37,11 @@ public class CanvasManager : MonoBehaviour
     public Color validColor = Color.white;
     public Color invalidColor = new Color(1f, 0.6f, 0.6f);
 
+    [Header("Texts")]
+    public Text episodeText;
+    public Text stepText;
+    public Text successfulPathsText;
+
     void Start()
     {
         gameManager = GameManager.Instance;
@@ -112,5 +117,20 @@ public class CanvasManager : MonoBehaviour
         {
             Debug.Log("Invalid inputs. Please correct them.");
         }
+    }
+
+    public void set_episode_text(int episode, int maxEpisodes)
+    {
+        episodeText.text = $"{episode} / {maxEpisodes}";
+    }
+
+    public void set_step_text(int step, int maxSteps)
+    {
+        stepText.text = $"{step} / {maxSteps}";
+    }
+
+    public void set_successful_paths_text(int successfulPaths)
+    {
+        successfulPathsText.text = $"{successfulPaths}";
     }
 }
