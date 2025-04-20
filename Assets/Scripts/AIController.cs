@@ -9,8 +9,9 @@ using UnityEngine;
 
 public class AIController : MonoBehaviour
 {
-    bool    avoid_loops = false; //? Set to true to avoid infinite loops
-    float   step_delay = 0.001f; //? Delay between steps in seconds
+    [Header("AI Parameters")]
+    [SerializeField] bool    avoidLoops = true; //? Set to true to avoid infinite loops
+    [SerializeField] float   stepDelay = 0.001f; //? Delay between steps in seconds
 
     private System.Random rand = new System.Random();
 
@@ -99,9 +100,20 @@ public class AIController : MonoBehaviour
 
     System.Collections.IEnumerator SARSA_Coroutine()
     {
+        // Normalize parameters
+        learning_rate = Mathf.Clamp(learning_rate, 0.1f, 1f);
+        discount_factor = Mathf.Clamp(discount_factor, 0.1f, 1f);
+
         set_matrix();
 
         qTable = new float[m_rows * m_columns, 4]; // 4 actions: Up, Down, Left, Right
+        for (int s = 0; s < m_rows * m_columns; s++) // Initialize Q-table with zeros
+        {
+            for (int a = 0; a < 4; a++)
+            {
+                qTable[s, a] = 0f;
+            }
+        }
 
         m_matrix.find_start_and_goal_positions(m_matrix.get_board());
 
@@ -141,7 +153,7 @@ public class AIController : MonoBehaviour
                 int next_state = next_row * m_columns + next_col;
 
                 // Verificar si estamos en un ciclo infinito
-                if (avoid_loops)
+                if (avoidLoops)
                 {
                     if (visited_states.Count >= cycle_check_limit)
                     {
@@ -178,10 +190,10 @@ public class AIController : MonoBehaviour
                 float current_q = qTable[state, action];
                 float next_q = qTable[next_state, next_action];
 
-                // If it hits a wall, force Q-Value to be -1
+                // If it hits a wall {} else {} 
                 if (reward == -1 && next_row == current_position[0] && next_col == current_position[1])
                 {
-                    qTable[state, action] = -1;
+                    qTable[state, action] = current_q + learning_rate * (reward - current_q);
                 }
                 else
                 {
@@ -208,7 +220,7 @@ public class AIController : MonoBehaviour
 
                 steps++;
                 canvasManager.set_step_text(steps + 1, max_steps);
-                yield return new WaitForSeconds(step_delay); // Delay for visualization
+                yield return new WaitForSeconds(stepDelay); // Delay for visualization
             }
 
             // Display progress every 100 episodes
@@ -401,6 +413,7 @@ public class AIController : MonoBehaviour
             {
                 writer.WriteLine("Q-Table Values:");
                 writer.WriteLine("Format: [State] [Action] [Q-Value]");
+                writer.WriteLine("Date: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
                 for (int s = 0; s < m_rows * m_columns; s++)
                 {
@@ -425,12 +438,15 @@ public class AIController : MonoBehaviour
     {
         Debug.Log("Demonstrating learned path...");
 
+        m_matrix.reset_cells_color();
+
         current_position = new int[2] { start_position[0], start_position[1] };
 
         m_matrix.reset_to_starting_cell(current_position, 1000, 0);
 
         int steps = 0;
-        int max_steps = m_rows * m_columns * 2;
+        // int max_steps = m_rows * m_columns * 2;
+        int max_steps = 1000; // Arbitrary limit to prevent infinite loops
         bool reached_goal = false;
 
         while (steps < max_steps)
@@ -443,6 +459,7 @@ public class AIController : MonoBehaviour
 
             for (int a = 0; a < 4; a++)
             {
+                Debug.Log($"State: {state}, Action: {(Action)a}, Q-Value: {qTable[state, a]}");
                 if (qTable[state, a] > best_value)
                 {
                     best_value = qTable[state, a];
