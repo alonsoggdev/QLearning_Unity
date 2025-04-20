@@ -13,6 +13,7 @@ public class CanvasManager : MonoBehaviour
     public InputField goalAward;
     public InputField movementAward;
     public InputField giftAward;
+    public Button     startButton;
 
     [Header("Dropdowns")]
     public Dropdown algorithmDropdown;
@@ -102,6 +103,7 @@ public class CanvasManager : MonoBehaviour
     {
         if (CheckInputs())
         {
+            startButton.interactable = false;
 
             gameManager.SetAlgorithmValues(
                 algorithmDropdown.value,

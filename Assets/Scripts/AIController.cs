@@ -126,6 +126,9 @@ public class AIController : MonoBehaviour
         goal_position  = m_matrix.get_goal();
         current_position = new int[2] { start_position[0], start_position[1] };
 
+        Debug.Log("Start position: " + start_position[0] + ", " + start_position[1]);
+        Debug.Log("Goal position: " + goal_position[0] + ", " + goal_position[1]);
+
         // Add save all movements logic? True by default with default values
 
         for (int e = 0; e < episodes; e++)
@@ -230,13 +233,6 @@ public class AIController : MonoBehaviour
                 canvasManager.set_step_text(steps + 1, max_steps);
                 yield return new WaitForSeconds(stepDelay); // Delay for visualization
             }
-
-            // Display progress every 100 episodes
-            if ((e + 1) % 100 == 0)
-            {
-                Debug.Log($"Episode {e + 1}/{episodes} completed. Steps: {steps}");
-            }
-
         }
 
         Debug.Log("SARSA training completed.");
@@ -346,6 +342,13 @@ public class AIController : MonoBehaviour
                 break;
         }
 
+        // Validate indices
+        if (potential_next_row < 0 || potential_next_row >= m_rows || potential_next_col < 0 || potential_next_col >= m_columns)
+        {
+            Debug.LogError($"Índices fuera de rango: ({potential_next_row}, {potential_next_col})");
+            return -1; // Penalización por intentar moverse fuera de los límites
+        }
+
         // Check what's in the potential next position
         if (potential_next_row != current_position[0] || potential_next_col != current_position[1])
         {
@@ -355,26 +358,31 @@ public class AIController : MonoBehaviour
             {
                 // Hit a wall - stay in current position
                 hit_wall = true;
-            }
-            else if (cell_content == 'G')
-            {
-                // Found a gift - move to that position
-                next_row = potential_next_row;
-                next_col = potential_next_col;
-                found_gift = true;
-
-                // If this is not just a simulation, change the gift to empty space
-                // so it can only be collected once
-                if (update_board)
-                {
-                    m_matrix.set_board_value(next_row, next_col, '0');
-                }
+                Debug.Log($"El agente chocó con una pared en ({current_position[0]}, {current_position[1]}) al intentar hacer la accion {action_to_string(action)}.");
             }
             else
             {
-                // Valid move to empty space or goal
-                next_row = potential_next_row;
-                next_col = potential_next_col;
+                Debug.Log($"El agente se movió de ({current_position[0]}, {current_position[1]}) a ({potential_next_row}, {potential_next_col}) al hacer la accion {action_to_string(action)}.");
+                if (cell_content == 'G')
+                {
+                    // Found a gift - move to that position
+                    next_row = potential_next_row;
+                    next_col = potential_next_col;
+                    found_gift = true;
+
+                    // If this is not just a simulation, change the gift to empty space
+                    // so it can only be collected once
+                    if (update_board)
+                    {
+                        m_matrix.set_board_value(next_row, next_col, '0');
+                    }
+                }
+                else
+                {
+                    // Valid move to empty space or goal
+                    next_row = potential_next_row;
+                    next_col = potential_next_col;
+                }
             }
         }
 
@@ -397,17 +405,19 @@ public class AIController : MonoBehaviour
         }
         else if (hit_wall)
         {
-            reward = -1; // Hit a wall
+            reward = -1000; // Hit a wall
         }
         else if (next_row == current_position[0] && next_col == current_position[1] && !hit_wall)
         {
             reward = -1; // Couldn't move (other reason)
+            Debug.Log($"El agente no pudo moverse desde ({current_position[0]}, {current_position[1]}).");
         }
         else
         {
             reward = movement_award; // Standard move reward
         }
 
+        // Debug.Log($"Recompensa calculada: {reward} para la acción {action} en ({next_row}, {next_col}).");
         return reward;
     }
 
@@ -428,9 +438,12 @@ public class AIController : MonoBehaviour
                     int r = s / m_columns;
                     int c = s % m_columns;
 
-                    for (int a = 0; a < 4; a++)
+                    if (m_matrix.get_board()[r, c] != '1')
                     {
-                        writer.WriteLine($"[{r},{c}] {(Action)a} {qTable[s, a]:F4}");
+                        for (int a = 0; a < 4; a++)
+                        {
+                            writer.WriteLine($"[{r},{c}] {(Action)a} {qTable[s, a]:F4}");
+                        }
                     }
                 }
             }
@@ -507,4 +520,20 @@ public class AIController : MonoBehaviour
         }
     }
 
+    string action_to_string(int action)
+    {
+        switch (action)
+        {
+            case 0:
+                return "Up";
+            case 1:
+                return "Down";
+            case 2:
+                return "Left";
+            case 3:
+                return "Right";
+            default:
+                return "Invalid action";
+        }
+    }
 }
