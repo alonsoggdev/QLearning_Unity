@@ -59,9 +59,9 @@ public class CanvasManager : MonoBehaviour
     {
         learningRate.text = "2";
         discountFactor.text = "9";
-        goalAward.text = "100";
-        movementAward.text = "-1";
-        giftAward.text = "15";
+        goalAward.text = "1000";
+        movementAward.text = "10";
+        giftAward.text = "150";
 
         algorithmDropdown.value = 0;
     }

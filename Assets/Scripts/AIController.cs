@@ -11,7 +11,7 @@ public class AIController : MonoBehaviour
 {
     [Header("AI Parameters")]
     [SerializeField] bool    avoidLoops = true; //? Set to true to avoid infinite loops
-    [SerializeField] float   stepDelay = 0.001f; //? Delay between steps in seconds
+    [SerializeField] float   stepDelay = 0.0001f; //? Delay between steps in seconds
 
     private System.Random rand = new System.Random();
 
@@ -65,7 +65,7 @@ public class AIController : MonoBehaviour
 
 
     [Header("SARSA Parameters")]
-    [SerializeField]int episodes    = 1000; // Number of episodes
+    [SerializeField]int episodes    = 10000; // Number of episodes
     [SerializeField]float epsilon   = 0.6f; // Exploration rate
 
     // Control parameters for saving
@@ -75,6 +75,8 @@ public class AIController : MonoBehaviour
     // Track when the first successful path is found
     List<int> success_episodes = new List<int>();
     List<int> success_steps = new List<int>();
+
+    int[] previous_position = new int[2] { -1, -1 }; // Previous position to check for cycles
 
     enum Action
     {
@@ -157,6 +159,9 @@ public class AIController : MonoBehaviour
 
             while (!done && steps < max_steps)
             {
+                previous_position[0] = current_position[0];
+                previous_position[1] = current_position[1];
+
                 float reward = take_action(m_matrix.get_board(), action, out int next_row, out int next_col);
                 int next_state = next_row * m_columns + next_col;
 
@@ -233,6 +238,8 @@ public class AIController : MonoBehaviour
                 canvasManager.set_step_text(steps + 1, max_steps);
                 yield return new WaitForSeconds(stepDelay); // Delay for visualization
             }
+
+            // epsilon = Mathf.Max(0.1f, epsilon * 0.99f); // Reduce epsilon pero no menos de 0.1
         }
 
         Debug.Log("SARSA training completed.");
@@ -395,7 +402,11 @@ public class AIController : MonoBehaviour
 
         // Calculate reward
         float reward;
-        if (next_row == goal_position[0] && next_col == goal_position[1])
+        if (next_row == previous_position[0] && next_col == previous_position[1]) // If comes back to previous position
+        {
+            reward = -5;
+        }
+        else if (next_row == goal_position[0] && next_col == goal_position[1])
         {
             reward = goal_award; // Reached the goal
         }
@@ -405,11 +416,11 @@ public class AIController : MonoBehaviour
         }
         else if (hit_wall)
         {
-            reward = -5; // Hit a wall
+            reward = -10; // Hit a wall
         }
         else if (next_row == current_position[0] && next_col == current_position[1] && !hit_wall)
         {
-            reward = -1; // Couldn't move (other reason)
+            reward = -5; // Couldn't move (other reason)
             Debug.Log($"El agente no pudo moverse desde ({current_position[0]}, {current_position[1]}).");
         }
         else
@@ -492,7 +503,7 @@ public class AIController : MonoBehaviour
             current_position[0] = nextRow;
             current_position[1] = nextCol;
 
-            // Debug.Log($"({current_position[0]}, {current_position[1]})");
+            Debug.Log($"({current_position[0]}, {current_position[1]})");
             m_matrix.mark_cell_as_visited(current_position[0], current_position[1]);
 
             // Check if reached goal
@@ -507,9 +518,6 @@ public class AIController : MonoBehaviour
             m_matrix.set_board_value(current_position[0], current_position[1], 'X');
             // m_matrix.print_board();
             m_matrix.save_board(1000, steps);
-
-            // Sleep to visualize the movement //TODO
-
 
             steps++;
         }

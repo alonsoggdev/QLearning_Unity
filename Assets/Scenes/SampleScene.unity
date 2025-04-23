@@ -1791,7 +1791,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avoidLoops: 1
-  stepDelay: 0.001
+  stepDelay: 0.00001
   episodes: 1000
   epsilon: 0.6
 --- !u!4 &921551953
