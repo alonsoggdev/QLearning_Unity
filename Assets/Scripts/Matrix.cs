@@ -163,6 +163,27 @@ public class Matrix
         }
     }
 
+    int[] get_random_empty_cell()
+    {
+        bool valid = false;
+
+        int row = -1;
+        int col = -1;
+
+        while (valid == false)
+        {
+            row = UnityEngine.Random.Range(0, m_rows);
+            col = UnityEngine.Random.Range(0, m_columns);
+
+            if (m_board[row, col] == '0')
+            {
+                valid = true;
+            }
+        }
+
+        return new int[] { row, col };
+    }
+
     public void reset_to_initial_position(int[] current_position, int current_episode, int step)
     {
         clear_x_position(current_position);
@@ -171,6 +192,21 @@ public class Matrix
         this.set_board_value(current_position[0], current_position[1], 'X');
         this.save_board(current_episode, step);
     }
+
+    public void reset_to_new_random_position(int[] current_position, int current_episode, int step)
+    {
+        clear_x_position(current_position);
+
+        int[] new_position = get_random_empty_cell();
+
+        // Debug.Log($"Nueva posición aleatoria: {new_position[0]}, {new_position[1]}");
+
+        // Set X at the initial position
+        this.set_board_value(new_position[0], new_position[1], 'X');
+        this.save_board(current_episode, step);
+    }
+
+
 
     public void reset_to_starting_cell(int[] current_position, int current_episode, int step)
     {

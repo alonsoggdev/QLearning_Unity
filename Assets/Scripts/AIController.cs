@@ -138,7 +138,7 @@ public class AIController : MonoBehaviour
             // Determine if we should save movements for this episode
             bool save_this_episode = save_all_movements || (e % save_frequency == 0) || (e == episodes - 1);
 
-            m_matrix.reset_to_initial_position(current_position, e, 0);
+            m_matrix.reset_to_new_random_position(current_position, e, 0);
             m_matrix.save_board(e, 0);
 
             int state = current_position[0] * m_columns + current_position[1];
@@ -358,11 +358,11 @@ public class AIController : MonoBehaviour
             {
                 // Hit a wall - stay in current position
                 hit_wall = true;
-                Debug.Log($"El agente chocó con una pared en ({current_position[0]}, {current_position[1]}) al intentar hacer la accion {action_to_string(action)}.");
+                // Debug.Log($"El agente chocó con una pared en ({current_position[0]}, {current_position[1]}) al intentar hacer la accion {action_to_string(action)}.");
             }
             else
             {
-                Debug.Log($"El agente se movió de ({current_position[0]}, {current_position[1]}) a ({potential_next_row}, {potential_next_col}) al hacer la accion {action_to_string(action)}.");
+                // Debug.Log($"El agente se movió de ({current_position[0]}, {current_position[1]}) a ({potential_next_row}, {potential_next_col}) al hacer la accion {action_to_string(action)}.");
                 if (cell_content == 'G')
                 {
                     // Found a gift - move to that position
@@ -405,7 +405,7 @@ public class AIController : MonoBehaviour
         }
         else if (hit_wall)
         {
-            reward = -1000; // Hit a wall
+            reward = -5; // Hit a wall
         }
         else if (next_row == current_position[0] && next_col == current_position[1] && !hit_wall)
         {
