@@ -66,7 +66,7 @@ public class AIController : MonoBehaviour
 
     [Header("SARSA Parameters")]
     [SerializeField]int episodes    = 10000; // Number of episodes
-    [SerializeField]float epsilon   = 0.6f; // Exploration rate
+    [SerializeField]float epsilon   = 0.9f; // Exploration rate
 
     // Control parameters for saving
     bool save_all_movements = false;    // Set to true if you want to save every movement (warning: creates large files)
@@ -114,13 +114,27 @@ public class AIController : MonoBehaviour
         set_matrix();
 
         qTable = new float[m_rows * m_columns, 4]; // 4 actions: Up, Down, Left, Right
-        for (int s = 0; s < m_rows * m_columns; s++) // Initialize Q-table with zeros
+        for (int s = 0; s < m_rows * m_columns; s++)
         {
-            for (int a = 0; a < 4; a++)
+            int r = s / m_columns;
+            int c = s % m_columns;
+
+            if (m_matrix.get_board()[r, c] != '1') // Evita inicializar paredes
             {
-                qTable[s, a] = 0f;
+                for (int a = 0; a < 4; a++)
+                {
+                    qTable[s, a] = (float)(rand.NextDouble() * 0.1); // Valores pequeños aleatorios [0, 0.1)
+                }
+            }
+            else
+            {
+                for (int a = 0; a < 4; a++)
+                {
+                    qTable[s, a] = 0f; // Celdas de pared con Q=0
+                }
             }
         }
+
 
         m_matrix.find_start_and_goal_positions(m_matrix.get_board());
 
@@ -162,7 +176,7 @@ public class AIController : MonoBehaviour
                 previous_position[0] = current_position[0];
                 previous_position[1] = current_position[1];
 
-                float reward = take_action(m_matrix.get_board(), action, out int next_row, out int next_col);
+                float reward = take_action(m_matrix.get_board(), action, out int next_row, out int next_col, false, steps);
                 int next_state = next_row * m_columns + next_col;
 
                 // Verificar si estamos en un ciclo infinito
@@ -239,7 +253,7 @@ public class AIController : MonoBehaviour
                 yield return new WaitForSeconds(stepDelay); // Delay for visualization
             }
 
-            // epsilon = Mathf.Max(0.1f, epsilon * 0.99f); // Reduce epsilon pero no menos de 0.1
+            epsilon = Mathf.Max(0.1f, epsilon -0.001f); // Reduce epsilon pero no menos de 0.1
         }
 
         Debug.Log("SARSA training completed.");
@@ -309,7 +323,7 @@ public class AIController : MonoBehaviour
         return best_action;
     }
 
-    private float take_action(char[,] board, int action, out int next_row, out int next_col, bool update_board = false)
+    private float take_action(char[,] board, int action, out int next_row, out int next_col, bool update_board = false, int step = 0)
     {
         // Default is to stay in current position
         next_row = current_position[0];
@@ -402,14 +416,14 @@ public class AIController : MonoBehaviour
 
         // Calculate reward
         float reward;
-        if (next_row == previous_position[0] && next_col == previous_position[1]) // If comes back to previous position
-        {
-            reward = -5;
-        }
-        else if (next_row == goal_position[0] && next_col == goal_position[1])
+        if (next_row == goal_position[0] && next_col == goal_position[1])
         {
             reward = goal_award; // Reached the goal
         }
+        // else if (next_row == previous_position[0] && next_col == previous_position[1]) // If comes back to previous position
+        // {
+        //     reward = -5;
+        // }
         else if (found_gift)
         {
             reward = gift_award; // Collected a gift
@@ -420,15 +434,14 @@ public class AIController : MonoBehaviour
         }
         else if (next_row == current_position[0] && next_col == current_position[1] && !hit_wall)
         {
-            reward = -5; // Couldn't move (other reason)
+            reward = -50; // Couldn't move (other reason)
             Debug.Log($"El agente no pudo moverse desde ({current_position[0]}, {current_position[1]}).");
         }
         else
         {
             reward = movement_award; // Standard move reward
         }
-
-        // Debug.Log($"Recompensa calculada: {reward} para la acción {action} en ({next_row}, {next_col}).");
+        // Debug.Log("Step " + (step + 1) + " - Action: " + action_to_string(action) + " - Reward: " + reward + " - Position: (" + next_row + ", " + next_col + ")" + "epsilon: " + epsilon);
         return reward;
     }
 
@@ -490,6 +503,7 @@ public class AIController : MonoBehaviour
 
             for (int a = 0; a < 4; a++)
             {
+                Debug.Log(state);
                 if (qTable[state, a] > best_value)
                 {
                     best_value = qTable[state, a];

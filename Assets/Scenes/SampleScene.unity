@@ -1793,7 +1793,7 @@ MonoBehaviour:
   avoidLoops: 1
   stepDelay: 0.00001
   episodes: 1000
-  epsilon: 0.6
+  epsilon: 0.9
 --- !u!4 &921551953
 Transform:
   m_ObjectHideFlags: 0
