@@ -102,7 +102,133 @@ public class AIController : MonoBehaviour
 
     System.Collections.IEnumerator QLearning_Coroutine()
     {
-        yield return new WaitForSeconds(0.1f);
+        // Normaliza los parámetros
+        learning_rate = Mathf.Clamp(learning_rate, 0.1f, 1f);
+        discount_factor = Mathf.Clamp(discount_factor, 0.1f, 1f);
+
+        set_matrix();
+
+        // Inicializa la Q-Table
+        qTable = new float[m_rows * m_columns, 4]; // 4 acciones: Up, Down, Left, Right
+        for (int s = 0; s < m_rows * m_columns; s++)
+        {
+            int r = s / m_columns;
+            int c = s % m_columns;
+
+            if (m_matrix.get_board()[r, c] != '1') // Evita inicializar paredes
+            {
+                for (int a = 0; a < 4; a++)
+                {
+                    qTable[s, a] = (float)(rand.NextDouble() * 0.1); // Valores pequeños aleatorios [0, 0.1)
+                }
+            }
+            else
+            {
+                for (int a = 0; a < 4; a++)
+                {
+                    qTable[s, a] = 0f; // Celdas de pared con Q=0
+                }
+            }
+        }
+
+        m_matrix.find_start_and_goal_positions(m_matrix.get_board());
+
+        start_position = m_matrix.get_start();
+        goal_position = m_matrix.get_goal();
+        current_position = new int[2] { start_position[0], start_position[1] };
+
+        Debug.Log("Start position: " + start_position[0] + ", " + start_position[1]);
+        Debug.Log("Goal position: " + goal_position[0] + ", " + goal_position[1]);
+
+        for (int e = 0; e < episodes; e++)
+        {
+            canvasManager.set_episode_text(e + 1, episodes);
+            m_matrix.reset_cells_color();
+
+            // Determina si se deben guardar los movimientos de este episodio
+            bool save_this_episode = save_all_movements || (e % save_frequency == 0) || (e == episodes - 1);
+
+            m_matrix.reset_to_new_random_position(current_position, e, 0);
+            m_matrix.save_board(e, 0);
+
+            int state = current_position[0] * m_columns + current_position[1];
+            bool done = false;
+            int steps = 0;
+            int max_steps = m_rows * m_columns * 2; // Límite arbitrario para evitar bucles infinitos
+
+            while (!done && steps < max_steps)
+            {
+                // Selecciona una acción usando epsilon-greedy
+                int action = epsilon_greedy_action(state, epsilon);
+
+                // Realiza la acción y obtiene la recompensa y el siguiente estado
+                float reward = take_action(m_matrix.get_board(), action, out int next_row, out int next_col, false, steps);
+                int next_state = next_row * m_columns + next_col;
+
+                // Encuentra el valor Q máximo en el siguiente estado
+                float max_next_q = float.MinValue;
+                for (int a = 0; a < 4; a++)
+                {
+                    max_next_q = Mathf.Max(max_next_q, qTable[next_state, a]);
+                }
+
+                // Actualiza el valor Q usando la fórmula de Q-Learning
+                float current_q = qTable[state, action];
+                qTable[state, action] = current_q + learning_rate * (reward + discount_factor * max_next_q - current_q);
+
+                // Verifica si se alcanzó el objetivo
+                if (next_row == goal_position[0] && next_col == goal_position[1])
+                {
+                    done = true;
+
+                    int success_episode = e + 1;
+                    int success_step = steps + 1;
+                    success_episodes.Add(success_episode);
+                    success_steps.Add(success_step);
+                    canvasManager.set_successful_paths_text(success_episodes.Count);
+                }
+
+                // Actualiza el estado actual
+                state = next_state;
+
+                // Actualiza la posición en el tablero
+                m_matrix.set_board_value(current_position[0], current_position[1], '0'); // Limpia la posición anterior
+                current_position[0] = next_row;
+                current_position[1] = next_col;
+                m_matrix.set_board_value(current_position[0], current_position[1], 'X'); // Marca la nueva posición
+
+                m_matrix.mark_cell_as_checked(current_position[0], current_position[1]);
+
+                if (save_this_episode)
+                {
+                    m_matrix.save_board(e + 1, steps + 1);
+                }
+
+                steps++;
+                canvasManager.set_step_text(steps + 1, max_steps);
+                yield return new WaitForSeconds(stepDelay); // Pausa para visualización
+            }
+
+            // Reduce epsilon gradualmente al final de cada episodio
+            epsilon = Mathf.Max(0.1f, epsilon * 0.99f); // Reduce epsilon pero no menos de 0.1
+        }
+
+        Debug.Log("Q-Learning training completed.");
+
+        if (success_episodes.Count > 0)
+        {
+            Debug.Log("Successful paths found: " + success_episodes.Count);
+        }
+        else
+        {
+            Debug.Log("No successful paths found.");
+        }
+
+        // Guarda la Q-Table final
+        save_qTable();
+
+        // Demuestra el camino aprendido
+        demonstrate_learned_path(m_matrix.get_board());
     }
 
     System.Collections.IEnumerator SARSA_Coroutine()
@@ -503,7 +629,6 @@ public class AIController : MonoBehaviour
 
             for (int a = 0; a < 4; a++)
             {
-                Debug.Log(state);
                 if (qTable[state, a] > best_value)
                 {
                     best_value = qTable[state, a];
