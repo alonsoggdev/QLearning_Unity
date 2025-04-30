@@ -238,7 +238,7 @@
     "Row": 2,
     "Column": 6,
     "Up": true,
-    "Down": true,
+    "Down": false,
     "Left": false,
     "Right": true
   },
@@ -321,10 +321,10 @@
     "Up": false,
     "Down": true,
     "Left": true,
-    "Right": true
+    "Right": false
   },
   {
-    "Type": "0",
+    "Type": "1",
     "Row": 3,
     "Column": 6,
     "Up": false,
@@ -338,7 +338,7 @@
     "Column": 7,
     "Up": true,
     "Down": false,
-    "Left": true,
+    "Left": false,
     "Right": true
   },
   {
@@ -417,7 +417,7 @@
     "Type": "1",
     "Row": 4,
     "Column": 6,
-    "Up": true,
+    "Up": false,
     "Down": true,
     "Left": true,
     "Right": false

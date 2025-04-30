@@ -275,6 +275,7 @@ public class AIController : MonoBehaviour
 
         for (int e = 0; e < episodes; e++)
         {
+
             canvasManager.set_episode_text(e + 1, episodes);
             m_matrix.reset_cells_color();
             // Determine if we should save movements for this episode
@@ -345,16 +346,6 @@ public class AIController : MonoBehaviour
 
                 // Update Q-value
                 qTable[state, action] = current_q + learning_rate * (reward + discount_factor * next_q - current_q);
-
-                // If it hits a wall {} else {} 
-                // if (reward == -1 && next_row == current_position[0] && next_col == current_position[1])
-                // {
-                //     qTable[state, action] = current_q + learning_rate * (reward - current_q);
-                // }
-                // else
-                // {
-                    // qTable[state, action] = current_q + learning_rate * (reward + discount_factor * next_q - current_q);
-                // }
 
                 // Update current state and action
                 state = next_state;
@@ -454,12 +445,15 @@ public class AIController : MonoBehaviour
         // Default is to stay in current position
         next_row = current_position[0];
         next_col = current_position[1];
+
         bool hit_wall = false;
         bool found_gift = false;
 
         // Calculate potential next position based on action
         int potential_next_row = current_position[0];
         int potential_next_col = current_position[1];
+        int previous_row = current_position[0];
+        int previous_col = current_position[1];
 
         switch ((Action)action)
         {
@@ -562,6 +556,10 @@ public class AIController : MonoBehaviour
         {
             reward = -50; // Couldn't move (other reason)
             Debug.Log($"El agente no pudo moverse desde ({current_position[0]}, {current_position[1]}).");
+        }
+        else if (next_col == previous_row && next_col == previous_col)
+        {
+            reward = -5;
         }
         else
         {
