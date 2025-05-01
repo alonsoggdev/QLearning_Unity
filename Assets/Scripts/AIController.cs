@@ -30,7 +30,7 @@ public class AIController : MonoBehaviour
     private float           learning_rate;
     private float           discount_factor;
     private float           goal_award;
-    private float           movement_award;
+    private float           movement_award = -1f;
     private float           gift_award;
 
     public void set_algorithm(int algorithm)
@@ -304,6 +304,14 @@ public class AIController : MonoBehaviour
                 previous_position[1] = current_position[1];
 
                 float reward = take_action(m_matrix.get_board(), action, out int next_row, out int next_col, false, steps);
+
+                if (m_matrix.get_board()[next_row, next_col] == '1')
+                {
+                    continue;
+                }
+
+                // Debug.Log("Action: " + action_to_string(action) + " - Reward: " + reward + " - Position: (" + current_position[0] + ", " + current_position[1] + ")" + "epsilon: " + epsilon);
+
                 int next_state = next_row * m_columns + next_col;
 
                 // Verificar si estamos en un ciclo infinito
@@ -550,7 +558,7 @@ public class AIController : MonoBehaviour
         }
         else if (hit_wall)
         {
-            reward = -10; // Hit a wall
+            reward = -1; // Hit a wall
         }
         else if (next_row == current_position[0] && next_col == current_position[1] && !hit_wall)
         {
@@ -590,7 +598,14 @@ public class AIController : MonoBehaviour
                     {
                         for (int a = 0; a < 4; a++)
                         {
-                            writer.WriteLine($"[{r},{c}] {(Action)a} {qTable[s, a]:F4}");
+                            if (is_action_valid(a, r, c))
+                            {
+                                writer.WriteLine($"[{r},{c}] {(Action)a} {qTable[s, a]:F4}");
+                            }
+                            else
+                            {
+                                writer.WriteLine($"[{r},{c}] {(Action)a} {-Mathf.Infinity:F4}");
+                            }
                         }
                     }
                 }
@@ -601,6 +616,49 @@ public class AIController : MonoBehaviour
         {
             Debug.Log("Error saving Q-Table: " + ex.Message);
         }
+    }
+
+    bool is_action_valid(int action, int currentRow, int currentCol)
+    {
+        bool result = true;
+        switch (action)
+        {
+            case 0:
+                // Debug.Log("Action: Up");
+                if (m_matrix.get_board()[currentRow - 1, currentCol] == '1')
+                {
+                    result = false; // Invalid action
+                }
+                break;
+            case 1:
+                // Debug.Log("Action: Down");
+                if (m_matrix.get_board()[currentRow + 1, currentCol] == '1')
+                {
+                    result = false; // Invalid action
+                }
+                break;
+            case 2:
+                // Debug.Log("Action: Left");
+                if (m_matrix.get_board()[currentRow, currentCol - 1] == '1')
+                {
+                    result = false; // Invalid action
+                }
+                break;
+            case 3:
+                // Debug.Log("Action: Right");
+                if (m_matrix.get_board()[currentRow, currentCol + 1] == '1')
+                {
+                    result = false; // Invalid action
+                }
+                break;
+            default:
+                Debug.LogError("Invalid action");
+                result = false;
+                break;
+        }
+
+        return result;
+        // Debug.Log($"Next position: ({nextRow}, {nextCol})");
     }
 
     private void demonstrate_learned_path(char[,] board)
@@ -636,11 +694,14 @@ public class AIController : MonoBehaviour
 
             // Take the best action
             m_matrix.set_board_value(current_position[0], current_position[1], '0'); // Clear current position
-            float action = take_action(m_matrix.get_board(), best_action, out int nextRow, out int nextCol);
-            current_position[0] = nextRow;
-            current_position[1] = nextCol;
+            
+            float action_reward = take_action(m_matrix.get_board(), best_action, out int next_row, out int next_col, true, steps);
 
-            Debug.Log($"({current_position[0]}, {current_position[1]})");
+            Debug.Log("Moved from (" + current_position[0] + ", " + current_position[1] + ") to (" + next_row + ", " + next_col + ")");
+
+            current_position[0] = next_row;
+            current_position[1] = next_col;
+
             m_matrix.mark_cell_as_visited(current_position[0], current_position[1]);
 
             // Check if reached goal
@@ -663,6 +724,29 @@ public class AIController : MonoBehaviour
         {
             Debug.Log("Failed to reach the goal within the maximum number of steps.");
         }
+    }
+
+    int[] move_to_cell(int[] current_position, int action)
+    {
+        int[] new_position = new int[2] { current_position[0], current_position[1] };
+
+        switch (action)
+        {
+            case 0: // Up
+                new_position[0]--;
+                break;
+            case 1: // Down
+                new_position[0]++;
+                break;
+            case 2: // Left
+                new_position[1]--;
+                break;
+            case 3: // Right
+                new_position[1]++;
+                break;
+        }
+
+        return new_position;
     }
 
     string action_to_string(int action)

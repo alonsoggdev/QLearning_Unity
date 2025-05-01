@@ -30,13 +30,12 @@ public class GameManager : MonoBehaviour
         isExecuting = true;
     }
 
-    public void SetAlgorithmValues(int algorithm, float learningRate, float discountFactor, float goalAward, float movementAward, float giftAward)
+    public void SetAlgorithmValues(int algorithm, float learningRate, float discountFactor, float goalAward, float giftAward)
     {
         AIController.set_algorithm(algorithm);
         AIController.set_learning_rate(learningRate);
         AIController.set_discount_factor(discountFactor);
         AIController.set_goal_award(goalAward);
-        AIController.set_movement_award(movementAward);
         AIController.set_gift_award(giftAward);
     }
 

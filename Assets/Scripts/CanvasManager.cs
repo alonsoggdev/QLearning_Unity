@@ -28,9 +28,6 @@ public class CanvasManager : MonoBehaviour
     public int minGoalAward = 0;
     public int maxGoalAward = 0;
 
-    public int minMovementAward = 0;
-    public int maxMovementAward = 0;
-
     public int minGiftAward = 0;
     public int maxGiftAward = 0;
 
@@ -60,7 +57,6 @@ public class CanvasManager : MonoBehaviour
         learningRate.text = "2";
         discountFactor.text = "9";
         goalAward.text = "1000";
-        movementAward.text = "10";
         giftAward.text = "150";
 
         algorithmDropdown.value = 0;
@@ -71,10 +67,9 @@ public class CanvasManager : MonoBehaviour
         bool isValid1 = ValidateAndColor(learningRate, minLearningRate, maxLearningRate);
         bool isValid2 = ValidateAndColor(discountFactor, minDiscountFactor, maxDiscountFactor);
         bool isValid3 = ValidateAndColor(goalAward, minGoalAward, maxGoalAward);
-        bool isValid4 = ValidateAndColor(movementAward, minMovementAward, maxMovementAward);
         bool isValid5 = ValidateAndColor(giftAward, minGiftAward, maxGiftAward);
 
-        return isValid1 && isValid2 && isValid3 && isValid4 && isValid5;
+        return isValid1 && isValid2 && isValid3 && isValid5;
     }
 
     private bool ValidateAndColor(InputField inputField, int min, int max)
@@ -110,7 +105,6 @@ public class CanvasManager : MonoBehaviour
                 float.Parse(learningRate.text),
                 float.Parse(discountFactor.text),
                 float.Parse(goalAward.text),
-                float.Parse(movementAward.text),
                 float.Parse(giftAward.text)
             );
             gameManager.ExecuteAI(algorithmDropdown.value);
