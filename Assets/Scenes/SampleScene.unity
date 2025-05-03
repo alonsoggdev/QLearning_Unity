@@ -1788,8 +1788,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74ac7cd8830fa414799a339edbc6326d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  avoidLoops: 1
-  stepDelay: 0.00001
+  avoidLoops: 0
+  stepDelay: 0
   episodes: 1000
   epsilon: 0.9
 --- !u!4 &921551953
@@ -3889,10 +3889,10 @@ MonoBehaviour:
   giftAward: {fileID: 1386690940}
   startButton: {fileID: 1174730972}
   algorithmDropdown: {fileID: 1110312615}
-  minLearningRate: 1
-  maxLearningRate: 10
-  minDiscountFactor: 1
-  maxDiscountFactor: 10
+  minLearningRate: 0.01
+  maxLearningRate: 1
+  minDiscountFactor: 0.01
+  maxDiscountFactor: 1
   minGoalAward: 0
   maxGoalAward: 0
   minGiftAward: 0

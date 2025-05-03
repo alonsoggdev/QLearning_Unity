@@ -249,17 +249,20 @@ public class AIController : MonoBehaviour
             {
                 for (int a = 0; a < 4; a++)
                 {
-                    qTable[s, a] = (float)(rand.NextDouble() * 0.1); // Valores pequeños aleatorios [0, 0.1)
+                    // qTable[s, a] = (float)(rand.NextDouble() * 0.1); // Valores pequeños aleatorios [0, 0.1)
+                    qTable[s, a] = 0f; // Inicializa Q-table con 0
                 }
             }
             else
             {
                 for (int a = 0; a < 4; a++)
                 {
-                    qTable[s, a] = 0f; // Celdas de pared con Q=0
+                    qTable[s, a] = -Mathf.Infinity;
                 }
             }
         }
+
+        save_qTable();
 
 
         m_matrix.find_start_and_goal_positions(m_matrix.get_board());
@@ -304,12 +307,7 @@ public class AIController : MonoBehaviour
                 previous_position[1] = current_position[1];
 
                 float reward = take_action(m_matrix.get_board(), action, out int next_row, out int next_col, false, steps);
-
-                if (m_matrix.get_board()[next_row, next_col] == '1')
-                {
-                    continue;
-                }
-
+                
                 // Debug.Log("Action: " + action_to_string(action) + " - Reward: " + reward + " - Position: (" + current_position[0] + ", " + current_position[1] + ")" + "epsilon: " + epsilon);
 
                 int next_state = next_row * m_columns + next_col;
@@ -353,7 +351,16 @@ public class AIController : MonoBehaviour
                 float next_q = qTable[next_state, next_action];
 
                 // Update Q-value
-                qTable[state, action] = current_q + learning_rate * (reward + discount_factor * next_q - current_q);
+                if (reward == -Mathf.Infinity)
+                {
+                    // qTable[state, action] = -Mathf.Infinity;
+                }
+                else
+                {
+                    // Debug.Log("Current Q: " + current_q + " Next Q: " + next_q + " Reward: " + reward + "Learning rate: " + learning_rate + " Discount factor: " + discount_factor);
+                    qTable[state, action] = current_q + learning_rate * (reward + discount_factor * next_q - current_q);
+                }
+
 
                 // Update current state and action
                 state = next_state;
@@ -558,14 +565,14 @@ public class AIController : MonoBehaviour
         }
         else if (hit_wall)
         {
-            reward = -1; // Hit a wall
+            reward = -Mathf.Infinity; // Hit a wall
         }
         else if (next_row == current_position[0] && next_col == current_position[1] && !hit_wall)
         {
-            reward = -50; // Couldn't move (other reason)
+            reward = -5; // Couldn't move (other reason)
             Debug.Log($"El agente no pudo moverse desde ({current_position[0]}, {current_position[1]}).");
         }
-        else if (next_col == previous_row && next_col == previous_col)
+        else if (next_row == previous_row && next_col == previous_col)
         {
             reward = -5;
         }
@@ -600,11 +607,11 @@ public class AIController : MonoBehaviour
                         {
                             if (is_action_valid(a, r, c))
                             {
-                                writer.WriteLine($"[{r},{c}] {(Action)a} {qTable[s, a]:F4}");
+                                writer.WriteLine($"[{r},{c}] {(Action)a} {qTable[s, a]}");
                             }
                             else
                             {
-                                writer.WriteLine($"[{r},{c}] {(Action)a} {-Mathf.Infinity:F4}");
+                                writer.WriteLine($"[{r},{c}] {(Action)a} {-Mathf.Infinity}");
                             }
                         }
                     }
@@ -663,6 +670,17 @@ public class AIController : MonoBehaviour
 
     private void demonstrate_learned_path(char[,] board)
     {
+        for (int s = 0; s < m_rows * m_columns; s++) // Itera por todos los estados
+        {
+            for (int a = 0; a < 4; a++) // Itera por todas las acciones (0: Up, 1: Down, 2: Left, 3: Right)
+            {
+                if (qTable[s, a] == 0.0f)
+                {
+                    qTable[s, a] = -Mathf.Infinity; // Evita que se muestren acciones con Q=0
+                }
+            }
+        }
+
         Debug.Log("Demonstrating learned path...");
 
         m_matrix.reset_cells_color();
@@ -685,12 +703,15 @@ public class AIController : MonoBehaviour
 
             for (int a = 0; a < 4; a++)
             {
+                Debug.Log("Current position: " + "[" + current_position[0] + ", " + current_position[1] + "]" + " Action: " + action_to_string(a) + " Q-value: " + qTable[state, a]);
                 if (qTable[state, a] > best_value)
                 {
                     best_value = qTable[state, a];
                     best_action = a;
                 }
             }
+
+            Debug.Log("Best action: " + action_to_string(best_action) + " - Q-value: " + best_value + " Current position: (" + current_position[0] + ", " + current_position[1] + ")");
 
             // Take the best action
             m_matrix.set_board_value(current_position[0], current_position[1], '0'); // Clear current position
