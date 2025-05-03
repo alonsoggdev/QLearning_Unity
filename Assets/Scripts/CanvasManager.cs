@@ -19,17 +19,17 @@ public class CanvasManager : MonoBehaviour
     public Dropdown algorithmDropdown;
 
     [Header("Range Configuration")]
-    public int minLearningRate = 1;
-    public int maxLearningRate = 10;
+    public float minLearningRate = 0.01f;
+    public float maxLearningRate = 1.0f;
 
-    public int minDiscountFactor = 1;
-    public int maxDiscountFactor = 10;
+    public float minDiscountFactor = 0.01f;
+    public float maxDiscountFactor = 1.0f;
 
-    public int minGoalAward = 0;
-    public int maxGoalAward = 0;
+    public float minGoalAward = 0;
+    public float maxGoalAward = 0;
 
-    public int minGiftAward = 0;
-    public int maxGiftAward = 0;
+    public float minGiftAward = 0;
+    public float maxGiftAward = 0;
 
     [Header("Colors")]
     public Color validColor = Color.white;
@@ -39,6 +39,11 @@ public class CanvasManager : MonoBehaviour
     public Text episodeText;
     public Text stepText;
     public Text successfulPathsText;
+
+    float defaultLearningRate = 0.2f;
+    float defaultDiscountFactor = 0.9f;
+    float defaultGoalAward = 1000f;
+    float defaultGiftAward = 150f;
 
     void Start()
     {
@@ -54,10 +59,10 @@ public class CanvasManager : MonoBehaviour
 
     void set_default_values()
     {
-        learningRate.text = "2";
-        discountFactor.text = "9";
-        goalAward.text = "1000";
-        giftAward.text = "150";
+        learningRate.text = defaultLearningRate.ToString();
+        discountFactor.text = defaultDiscountFactor.ToString();
+        goalAward.text = defaultGoalAward.ToString();
+        giftAward.text = defaultGiftAward.ToString();
 
         algorithmDropdown.value = 0;
     }
@@ -72,7 +77,7 @@ public class CanvasManager : MonoBehaviour
         return isValid1 && isValid2 && isValid3 && isValid5;
     }
 
-    private bool ValidateAndColor(InputField inputField, int min, int max)
+    private bool ValidateAndColor(InputField inputField, float min, float max)
     {
         bool isValid = IsValid(inputField.text, min, max);
         Image bg = inputField.GetComponent<Image>();
@@ -83,9 +88,9 @@ public class CanvasManager : MonoBehaviour
         return isValid;
     }
 
-    private bool IsValid(string inputText, int min, int max)
+    private bool IsValid(string inputText, float min, float max)
     {
-        if (int.TryParse(inputText, out int value))
+        if (float.TryParse(inputText, out float value))
         {
             bool validMin = (min == 0) || (value >= min);
             bool validMax = (max == 0) || (value <= max);

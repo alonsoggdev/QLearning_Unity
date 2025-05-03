@@ -2878,13 +2878,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1300590607}
   m_TextComponent: {fileID: 446041743}
   m_Placeholder: {fileID: 141247104}
-  m_ContentType: 2
+  m_ContentType: 3
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 1
+  m_CharacterValidation: 2
   m_CharacterLimit: 0
   m_OnSubmit:
     m_PersistentCalls:
@@ -3287,13 +3287,13 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1460180962}
   m_TextComponent: {fileID: 1673609804}
   m_Placeholder: {fileID: 837518592}
-  m_ContentType: 2
+  m_ContentType: 3
   m_InputType: 0
   m_AsteriskChar: 42
-  m_KeyboardType: 4
+  m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
-  m_CharacterValidation: 1
+  m_CharacterValidation: 2
   m_CharacterLimit: 0
   m_OnSubmit:
     m_PersistentCalls:
@@ -3895,8 +3895,6 @@ MonoBehaviour:
   maxDiscountFactor: 10
   minGoalAward: 0
   maxGoalAward: 0
-  minMovementAward: 0
-  maxMovementAward: 0
   minGiftAward: 0
   maxGiftAward: 0
   validColor: {r: 1, g: 1, b: 1, a: 1}

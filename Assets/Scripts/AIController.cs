@@ -233,9 +233,9 @@ public class AIController : MonoBehaviour
 
     System.Collections.IEnumerator SARSA_Coroutine()
     {
-        // Normalize parameters
-        learning_rate = Mathf.Clamp(learning_rate, 0.1f, 1f);
-        discount_factor = Mathf.Clamp(discount_factor, 0.1f, 1f);
+
+        Debug.Log("Learning rate: " + learning_rate);
+        Debug.Log("Discount factor: " + discount_factor);
 
         set_matrix();
 
