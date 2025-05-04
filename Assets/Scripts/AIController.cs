@@ -66,18 +66,21 @@ public class AIController : MonoBehaviour
 
 
     [Header("SARSA Parameters")]
-    [SerializeField]int episodes    = 10000; // Number of episodes
-    [SerializeField]float epsilon   = 0.9f; // Exploration rate
+    [SerializeField]int episodes    = 10000;
+    [SerializeField]float epsilon   = 0.9f;
 
     // Control parameters for saving
-    bool save_all_movements = false;    // Set to true if you want to save every movement (warning: creates large files)
-    int save_frequency      = 1;      // Save movements for every Nth episode
+    bool save_all_movements = false;
+    int save_frequency      = 1;
 
     // Track when the first successful path is found
     List<int> success_episodes = new List<int>();
     List<int> success_steps = new List<int>();
 
-    int[] previous_position = new int[2] { -1, -1 }; // Previous position to check for cycles
+    int[] previous_position = new int[2] { -1, -1 };
+    
+    List<int> visited_states = new List<int>();
+    int cycle_check_limit = 4;
 
     enum Action
     {
@@ -105,29 +108,7 @@ public class AIController : MonoBehaviour
     {
         set_matrix();
 
-        // Inicializa la Q-Table
-        qTable = new float[m_rows * m_columns, 4]; // 4 actions: Up, Down, Left, Right
-        for (int s = 0; s < m_rows * m_columns; s++)
-        {
-            int r = s / m_columns;
-            int c = s % m_columns;
-
-            if (m_matrix.get_board()[r, c] != '1') // Evita inicializar paredes
-            {
-                for (int a = 0; a < 4; a++)
-                {
-                    // qTable[s, a] = (float)(rand.NextDouble() * 0.1); // Valores pequeños aleatorios [0, 0.1)
-                    qTable[s, a] = 0f; // Inicializa Q-table con 0
-                }
-            }
-            else
-            {
-                for (int a = 0; a < 4; a++)
-                {
-                    qTable[s, a] = -Mathf.Infinity;
-                }
-            }
-        }
+        initialize_qtable();
 
         save_qTable();
 
@@ -154,15 +135,14 @@ public class AIController : MonoBehaviour
             int state = current_position[0] * m_columns + current_position[1];
             bool done = false;
             int steps = 0;
-            int max_steps = m_rows * m_columns * 2; // Límite arbitrario para evitar bucles infinitos
+            int max_steps = m_rows * m_columns * 2;
 
             while (!done && steps < max_steps)
             {
-                // Selecciona una acción usando epsilon-greedy
                 int action = epsilon_greedy_action(state, epsilon);
 
-                // Realiza la acción y obtiene la recompensa y el siguiente estado
                 float reward = take_action(m_matrix.get_board(), action, out int next_row, out int next_col, false, steps);
+
                 int next_state = next_row * m_columns + next_col;
 
                 // Encuentra el valor Q máximo en el siguiente estado
@@ -175,17 +155,13 @@ public class AIController : MonoBehaviour
                 // Actualiza el valor Q usando la fórmula de Q-Learning
                 float current_q = qTable[state, action];
                 
-                if (reward == -Mathf.Infinity)
-                {
-
-                }
-                else
+                if (reward != -Mathf.Infinity)
                 {
                     qTable[state, action] = current_q + learning_rate * (reward + discount_factor * max_next_q - current_q);
                 }
 
                 // Verifica si se alcanzó el objetivo
-                if (next_row == goal_position[0] && next_col == goal_position[1])
+                if (check_goal_reached(next_row, next_col))
                 {
                     done = true;
 
@@ -218,7 +194,7 @@ public class AIController : MonoBehaviour
             }
 
             // Reduce epsilon gradualmente al final de cada episodio
-            epsilon = Mathf.Max(0.1f, epsilon * 0.99f); // Reduce epsilon pero no menos de 0.1
+            epsilon = Mathf.Max(0.3f, epsilon * 0.99f); // Reduce epsilon pero no menos de 0.1
         }
 
         Debug.Log("Q-Learning training completed.");
@@ -243,31 +219,9 @@ public class AIController : MonoBehaviour
     {
         set_matrix();
 
-        qTable = new float[m_rows * m_columns, 4]; // 4 actions: Up, Down, Left, Right
-        for (int s = 0; s < m_rows * m_columns; s++)
-        {
-            int r = s / m_columns;
-            int c = s % m_columns;
-
-            if (m_matrix.get_board()[r, c] != '1') // Evita inicializar paredes
-            {
-                for (int a = 0; a < 4; a++)
-                {
-                    // qTable[s, a] = (float)(rand.NextDouble() * 0.1); // Valores pequeños aleatorios [0, 0.1)
-                    qTable[s, a] = 0f; // Inicializa Q-table con 0
-                }
-            }
-            else
-            {
-                for (int a = 0; a < 4; a++)
-                {
-                    qTable[s, a] = -Mathf.Infinity;
-                }
-            }
-        }
+        initialize_qtable();
 
         save_qTable();
-
 
         m_matrix.find_start_and_goal_positions(m_matrix.get_board());
 
@@ -278,33 +232,23 @@ public class AIController : MonoBehaviour
         Debug.Log("Start position: " + start_position[0] + ", " + start_position[1]);
         Debug.Log("Goal position: " + goal_position[0] + ", " + goal_position[1]);
 
-        // Add save all movements logic? True by default with default values
-
         for (int e = 0; e < episodes; e++)
         {
-
             canvasManager.set_episode_text(e + 1, episodes);
             m_matrix.reset_cells_color();
+
             // Determine if we should save movements for this episode
             bool save_this_episode = save_all_movements || (e % save_frequency == 0) || (e == episodes - 1);
 
             current_position = m_matrix.reset_to_new_random_position(current_position, e, 0);
-            // m_matrix.reset_to_new_random_position(current_position, e, 0);
             m_matrix.save_board(e, 0);
 
             int state = current_position[0] * m_columns + current_position[1];
-            int action = epsilon_greedy_action(state, epsilon);
-
             bool done = false;
             int steps = 0;
-            int max_steps = m_rows * m_columns * 2; // Arbitrary limit to prevent infinite loops
-            
-            // Debug.Log("STARTING EPISODE " + (e + 1) + " with state: " + state + " and action: " + action);
-            // Debug.Log("Starting eposode in " + current_position[0] + " " + current_position[1]);
+            int max_steps = m_rows * m_columns * 2;
 
-            // Agregar una lista para rastrear las últimas posiciones visitadas
-            List<int> visited_states = new List<int>();
-            int cycle_check_limit = 4;
+            int action = epsilon_greedy_action(state, epsilon);
 
             while (!done && steps < max_steps)
             {
@@ -313,31 +257,21 @@ public class AIController : MonoBehaviour
 
                 float reward = take_action(m_matrix.get_board(), action, out int next_row, out int next_col, false, steps);
                 
-                // Debug.Log("Action: " + action_to_string(action) + " - Reward: " + reward + " - Position: (" + current_position[0] + ", " + current_position[1] + ")" + "epsilon: " + epsilon);
-
                 int next_state = next_row * m_columns + next_col;
 
                 // Verificar si estamos en un ciclo infinito
                 if (avoidLoops)
                 {
-                    if (visited_states.Count >= cycle_check_limit)
+                    if (detect_loop(state, next_state) == true)
                     {
-                        // Si el estado actual ya está en la lista de los últimos estados visitados
-                        if (visited_states[visited_states.Count - 2] == next_state && visited_states[visited_states.Count - 1] == state)
-                        {
-                            // Debug.Log("Ciclo infinito detectado. Finalizando episodio.");
-                            done = true;
-                            break;
-                        }
-
-                        visited_states.RemoveAt(0);
+                        // Debug.Log("Ciclo infinito detectado. Finalizando episodio.");
+                        done = true;
+                        break;
                     }
-
-                    visited_states.Add(state);
                 }
 
                 // Check if we reached the goal
-                if (next_row == goal_position[0] && next_col == goal_position[1])
+                if (check_goal_reached(next_row, next_col))
                 {
                     done = true;
 
@@ -356,16 +290,10 @@ public class AIController : MonoBehaviour
                 float next_q = qTable[next_state, next_action];
 
                 // Update Q-value
-                if (reward == -Mathf.Infinity)
+                if (reward != -Mathf.Infinity)
                 {
-                    // qTable[state, action] = -Mathf.Infinity;
-                }
-                else
-                {
-                    // Debug.Log("Current Q: " + current_q + " Next Q: " + next_q + " Reward: " + reward + "Learning rate: " + learning_rate + " Discount factor: " + discount_factor);
                     qTable[state, action] = current_q + learning_rate * (reward + discount_factor * next_q - current_q);
                 }
-
 
                 // Update current state and action
                 state = next_state;
@@ -390,7 +318,7 @@ public class AIController : MonoBehaviour
                 yield return new WaitForSeconds(stepDelay); // Delay for visualization
             }
 
-            epsilon = Mathf.Max(0.1f, epsilon -0.001f); // Reduce epsilon pero no menos de 0.1
+            epsilon = Mathf.Max(0.3f, epsilon -0.001f); // Reduce epsilon pero no menos de 0.1
         }
 
         Debug.Log("SARSA training completed.");
@@ -684,16 +612,7 @@ public class AIController : MonoBehaviour
 
     private void demonstrate_learned_path(char[,] board)
     {
-        for (int s = 0; s < m_rows * m_columns; s++) // Itera por todos los estados
-        {
-            for (int a = 0; a < 4; a++) // Itera por todas las acciones (0: Up, 1: Down, 2: Left, 3: Right)
-            {
-                if (qTable[s, a] == 0.0f)
-                {
-                    qTable[s, a] = -Mathf.Infinity; // Evita que se muestren acciones con Q=0
-                }
-            }
-        }
+        clear_zeros_in_qtable();
 
         Debug.Log("Demonstrating learned path...");
 
@@ -719,7 +638,6 @@ public class AIController : MonoBehaviour
 
             for (int a = 0; a < 4; a++)
             {
-                // Debug.Log("Current position: " + "[" + current_position[0] + ", " + current_position[1] + "]" + " Action: " + action_to_string(a) + " Q-value: " + qTable[state, a]);
                 if (qTable[state, a] > best_value)
                 {
                     best_value = qTable[state, a];
@@ -727,17 +645,13 @@ public class AIController : MonoBehaviour
                 }
             }
 
-            Debug.Log("Best action: " + action_to_string(best_action) + " - Q-value: " + best_value + " Current position: (" + current_position[0] + ", " + current_position[1] + ")");
-
-            // Take the best action
             m_matrix.set_board_value(current_position[0], current_position[1], '0'); // Clear current position
             
             float action_reward = take_action(m_matrix.get_board(), best_action, out int next_row, out int next_col, true, steps);
 
-            Debug.Log("Moved from (" + current_position[0] + ", " + current_position[1] + ") to (" + next_row + ", " + next_col + ")");
+            // Debug.Log("Moved from (" + current_position[0] + ", " + current_position[1] + ") to (" + next_row + ", " + next_col + ")");
 
-            current_position[0] = next_row;
-            current_position[1] = next_col;
+            current_position = new int[] { next_row, next_col };
 
             m_matrix.mark_cell_as_visited(current_position[0], current_position[1]);
 
@@ -825,5 +739,73 @@ public class AIController : MonoBehaviour
         success_episodes.Clear();
         success_steps.Clear();
         StopAlgorithm();
+        visited_states.Clear();
+    }
+
+    void initialize_qtable()
+    {
+        qTable = new float[m_rows * m_columns, 4]; // 4 actions: Up, Down, Left, Right
+        for (int s = 0; s < m_rows * m_columns; s++)
+        {
+            int r = s / m_columns;
+            int c = s % m_columns;
+
+            if (m_matrix.get_board()[r, c] != '1') // Evita inicializar paredes
+            {
+                for (int a = 0; a < 4; a++)
+                {
+                    qTable[s, a] = 0f; // Inicializa Q-table con 0
+                }
+            }
+            else
+            {
+                for (int a = 0; a < 4; a++)
+                {
+                    qTable[s, a] = -Mathf.Infinity;
+                }
+            }
+        }
+    }
+
+    void clear_zeros_in_qtable()
+    {
+        for (int s = 0; s < m_rows * m_columns; s++)
+        {
+            for (int a = 0; a < 4; a++)
+            {
+                if (qTable[s, a] == 0.0f)
+                {
+                    qTable[s, a] = -Mathf.Infinity;
+                }
+            }
+        }
+    }
+
+    bool detect_loop(int current_state, int next_state)
+    {
+        bool detected = false;
+
+        if (visited_states.Count >= cycle_check_limit)
+        {
+            // Si el estado actual ya está en la lista de los últimos estados visitados
+            if (visited_states[visited_states.Count - 2] == next_state && visited_states[visited_states.Count - 1] == current_state)
+            {
+                detected = true;
+            }
+
+            visited_states.RemoveAt(0);
+        }
+
+        visited_states.Add(current_state);
+        return detected;
+    }
+
+    bool check_goal_reached(int row, int col)
+    {
+        if (row == goal_position[0] && col == goal_position[1])
+        {
+            return true;
+        }
+        return false;
     }
 }
