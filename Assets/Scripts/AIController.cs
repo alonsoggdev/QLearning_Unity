@@ -32,6 +32,7 @@ public class AIController : MonoBehaviour
     private float           goal_award;
     private float           movement_award = -1f;
     private float           gift_award;
+    Coroutine               algorithmCoroutine;
 
     public void set_algorithm(int algorithm)
     {
@@ -102,14 +103,10 @@ public class AIController : MonoBehaviour
 
     System.Collections.IEnumerator QLearning_Coroutine()
     {
-        // Normaliza los parámetros
-        learning_rate = Mathf.Clamp(learning_rate, 0.1f, 1f);
-        discount_factor = Mathf.Clamp(discount_factor, 0.1f, 1f);
-
         set_matrix();
 
         // Inicializa la Q-Table
-        qTable = new float[m_rows * m_columns, 4]; // 4 acciones: Up, Down, Left, Right
+        qTable = new float[m_rows * m_columns, 4]; // 4 actions: Up, Down, Left, Right
         for (int s = 0; s < m_rows * m_columns; s++)
         {
             int r = s / m_columns;
@@ -119,17 +116,20 @@ public class AIController : MonoBehaviour
             {
                 for (int a = 0; a < 4; a++)
                 {
-                    qTable[s, a] = (float)(rand.NextDouble() * 0.1); // Valores pequeños aleatorios [0, 0.1)
+                    // qTable[s, a] = (float)(rand.NextDouble() * 0.1); // Valores pequeños aleatorios [0, 0.1)
+                    qTable[s, a] = 0f; // Inicializa Q-table con 0
                 }
             }
             else
             {
                 for (int a = 0; a < 4; a++)
                 {
-                    qTable[s, a] = 0f; // Celdas de pared con Q=0
+                    qTable[s, a] = -Mathf.Infinity;
                 }
             }
         }
+
+        save_qTable();
 
         m_matrix.find_start_and_goal_positions(m_matrix.get_board());
 
@@ -148,7 +148,7 @@ public class AIController : MonoBehaviour
             // Determina si se deben guardar los movimientos de este episodio
             bool save_this_episode = save_all_movements || (e % save_frequency == 0) || (e == episodes - 1);
 
-            m_matrix.reset_to_new_random_position(current_position, e, 0);
+            current_position = m_matrix.reset_to_new_random_position(current_position, e, 0);
             m_matrix.save_board(e, 0);
 
             int state = current_position[0] * m_columns + current_position[1];
@@ -174,7 +174,15 @@ public class AIController : MonoBehaviour
 
                 // Actualiza el valor Q usando la fórmula de Q-Learning
                 float current_q = qTable[state, action];
-                qTable[state, action] = current_q + learning_rate * (reward + discount_factor * max_next_q - current_q);
+                
+                if (reward == -Mathf.Infinity)
+                {
+
+                }
+                else
+                {
+                    qTable[state, action] = current_q + learning_rate * (reward + discount_factor * max_next_q - current_q);
+                }
 
                 // Verifica si se alcanzó el objetivo
                 if (next_row == goal_position[0] && next_col == goal_position[1])
@@ -292,7 +300,7 @@ public class AIController : MonoBehaviour
             int max_steps = m_rows * m_columns * 2; // Arbitrary limit to prevent infinite loops
             
             // Debug.Log("STARTING EPISODE " + (e + 1) + " with state: " + state + " and action: " + action);
-            Debug.Log("Starting eposode in " + current_position[0] + " " + current_position[1]);
+            // Debug.Log("Starting eposode in " + current_position[0] + " " + current_position[1]);
 
             // Agregar una lista para rastrear las últimas posiciones visitadas
             List<int> visited_states = new List<int>();
@@ -406,12 +414,31 @@ public class AIController : MonoBehaviour
 
     public void SARSA()
     {
-        StartCoroutine(SARSA_Coroutine());
+        if (algorithmCoroutine != null)
+        {
+            StopCoroutine(algorithmCoroutine);
+        }
+
+        algorithmCoroutine = StartCoroutine(SARSA_Coroutine());
     }
 
     public void QLearning()
     {
-        StartCoroutine(QLearning_Coroutine());
+        if (algorithmCoroutine != null)
+        {
+            StopCoroutine(algorithmCoroutine);
+        }
+
+        algorithmCoroutine = StartCoroutine(QLearning_Coroutine());
+    }
+
+    void StopAlgorithm()
+    {
+        if (algorithmCoroutine != null)
+        {
+            StopCoroutine(algorithmCoroutine);
+            algorithmCoroutine = null;
+        }
     }
 
     void print_successful_paths()
@@ -676,6 +703,8 @@ public class AIController : MonoBehaviour
 
         m_matrix.reset_to_starting_cell(current_position, 1000, 0);
 
+        m_matrix.mark_cell_as_visited(current_position[0], current_position[1]);
+
         int steps = 0;
         int max_steps = m_rows * m_columns * 2;
         bool reached_goal = false;
@@ -772,5 +801,29 @@ public class AIController : MonoBehaviour
             default:
                 return "Invalid action";
         }
+    }
+
+    void clean_qTable()
+    {
+        for (int s = 0; s < m_rows * m_columns; s++)
+        {
+            for (int a = 0; a < 4; a++)
+            {
+                qTable[s, a] = 0f;
+            }
+        }
+    }
+
+    public void Reset()
+    {
+        clean_qTable();
+        m_matrix.reset_cells_color();
+        m_matrix.reset_to_starting_cell(current_position, 0, 0);
+        canvasManager.set_successful_paths_text(0);
+        canvasManager.set_step_text(0, 0);
+        canvasManager.set_episode_text(0, 0);
+        success_episodes.Clear();
+        success_steps.Clear();
+        StopAlgorithm();
     }
 }

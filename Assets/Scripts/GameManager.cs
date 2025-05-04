@@ -30,6 +30,12 @@ public class GameManager : MonoBehaviour
         isExecuting = true;
     }
 
+    public void ResetGame()
+    {
+        AIController.Reset();
+        isExecuting = false;
+    }
+
     public void SetAlgorithmValues(int algorithm, float learningRate, float discountFactor, float goalAward, float giftAward)
     {
         AIController.set_algorithm(algorithm);

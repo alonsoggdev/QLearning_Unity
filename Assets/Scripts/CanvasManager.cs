@@ -14,6 +14,7 @@ public class CanvasManager : MonoBehaviour
     public InputField movementAward;
     public InputField giftAward;
     public Button     startButton;
+    public Button     resetButton;
 
     [Header("Dropdowns")]
     public Dropdown algorithmDropdown;
@@ -55,6 +56,7 @@ public class CanvasManager : MonoBehaviour
         }
 
         set_default_values();
+        resetButton.gameObject.SetActive(false);
     }
 
     void set_default_values()
@@ -99,11 +101,19 @@ public class CanvasManager : MonoBehaviour
         return false;
     }
 
+    public void ResetButton_Handler()
+    {
+        gameManager.ResetGame();
+        resetButton.gameObject.SetActive(false);
+        startButton.interactable = true;
+    }
+
     public void StartButton_Hanlder()
     {
         if (CheckInputs())
         {
             startButton.interactable = false;
+            resetButton.gameObject.SetActive(true);
 
             gameManager.SetAlgorithmValues(
                 algorithmDropdown.value,
