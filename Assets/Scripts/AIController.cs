@@ -233,10 +233,6 @@ public class AIController : MonoBehaviour
 
     System.Collections.IEnumerator SARSA_Coroutine()
     {
-
-        Debug.Log("Learning rate: " + learning_rate);
-        Debug.Log("Discount factor: " + discount_factor);
-
         set_matrix();
 
         qTable = new float[m_rows * m_columns, 4]; // 4 actions: Up, Down, Left, Right
@@ -284,7 +280,8 @@ public class AIController : MonoBehaviour
             // Determine if we should save movements for this episode
             bool save_this_episode = save_all_movements || (e % save_frequency == 0) || (e == episodes - 1);
 
-            m_matrix.reset_to_new_random_position(current_position, e, 0);
+            current_position = m_matrix.reset_to_new_random_position(current_position, e, 0);
+            // m_matrix.reset_to_new_random_position(current_position, e, 0);
             m_matrix.save_board(e, 0);
 
             int state = current_position[0] * m_columns + current_position[1];
@@ -295,7 +292,7 @@ public class AIController : MonoBehaviour
             int max_steps = m_rows * m_columns * 2; // Arbitrary limit to prevent infinite loops
             
             // Debug.Log("STARTING EPISODE " + (e + 1) + " with state: " + state + " and action: " + action);
-            // Debug.Log(current_position[0] + " " + current_position[1]);
+            Debug.Log("Starting eposode in " + current_position[0] + " " + current_position[1]);
 
             // Agregar una lista para rastrear las últimas posiciones visitadas
             List<int> visited_states = new List<int>();
@@ -518,12 +515,12 @@ public class AIController : MonoBehaviour
             }
             else
             {
+                next_row = potential_next_row;
+                next_col = potential_next_col;
                 // Debug.Log($"El agente se movió de ({current_position[0]}, {current_position[1]}) a ({potential_next_row}, {potential_next_col}) al hacer la accion {action_to_string(action)}.");
                 if (cell_content == 'G')
                 {
                     // Found a gift - move to that position
-                    next_row = potential_next_row;
-                    next_col = potential_next_col;
                     found_gift = true;
 
                     // If this is not just a simulation, change the gift to empty space
@@ -532,12 +529,6 @@ public class AIController : MonoBehaviour
                     {
                         m_matrix.set_board_value(next_row, next_col, '0');
                     }
-                }
-                else
-                {
-                    // Valid move to empty space or goal
-                    next_row = potential_next_row;
-                    next_col = potential_next_col;
                 }
             }
         }
@@ -555,26 +546,22 @@ public class AIController : MonoBehaviour
         {
             reward = goal_award; // Reached the goal
         }
-        // else if (next_row == previous_position[0] && next_col == previous_position[1]) // If comes back to previous position
-        // {
-        //     reward = -5;
-        // }
+        else if (hit_wall)
+        {
+            reward = -Mathf.Infinity; // Hit a wall
+        }
         else if (found_gift)
         {
             reward = gift_award; // Collected a gift
         }
-        else if (hit_wall)
+        else if (next_row == previous_position[0] && next_col == previous_position[1]) // If comes back to previous position
         {
-            reward = -Mathf.Infinity; // Hit a wall
+            reward = -3;
         }
         else if (next_row == current_position[0] && next_col == current_position[1] && !hit_wall)
         {
             reward = -5; // Couldn't move (other reason)
             Debug.Log($"El agente no pudo moverse desde ({current_position[0]}, {current_position[1]}).");
-        }
-        else if (next_row == previous_row && next_col == previous_col)
-        {
-            reward = -5;
         }
         else
         {
@@ -703,7 +690,7 @@ public class AIController : MonoBehaviour
 
             for (int a = 0; a < 4; a++)
             {
-                Debug.Log("Current position: " + "[" + current_position[0] + ", " + current_position[1] + "]" + " Action: " + action_to_string(a) + " Q-value: " + qTable[state, a]);
+                // Debug.Log("Current position: " + "[" + current_position[0] + ", " + current_position[1] + "]" + " Action: " + action_to_string(a) + " Q-value: " + qTable[state, a]);
                 if (qTable[state, a] > best_value)
                 {
                     best_value = qTable[state, a];

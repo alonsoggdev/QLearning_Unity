@@ -193,7 +193,7 @@ public class Matrix
         this.save_board(current_episode, step);
     }
 
-    public void reset_to_new_random_position(int[] current_position, int current_episode, int step)
+    public int[] reset_to_new_random_position(int[] current_position, int current_episode, int step)
     {
         clear_x_position(current_position);
 
@@ -204,6 +204,8 @@ public class Matrix
         // Set X at the initial position
         this.set_board_value(new_position[0], new_position[1], 'X');
         this.save_board(current_episode, step);
+
+        return new_position;
     }
 
 
