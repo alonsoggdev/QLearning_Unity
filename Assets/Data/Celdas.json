@@ -40,7 +40,7 @@
     "Row": 0,
     "Column": 4,
     "Up": false,
-    "Down": false,
+    "Down": true,
     "Left": false,
     "Right": false
   },
@@ -49,7 +49,7 @@
     "Row": 0,
     "Column": 5,
     "Up": false,
-    "Down": true,
+    "Down": false,
     "Left": false,
     "Right": false
   },
@@ -67,7 +67,7 @@
     "Row": 0,
     "Column": 7,
     "Up": false,
-    "Down": false,
+    "Down": true,
     "Left": false,
     "Right": false
   },
@@ -76,7 +76,7 @@
     "Row": 0,
     "Column": 8,
     "Up": false,
-    "Down": true,
+    "Down": false,
     "Left": false,
     "Right": false
   },
@@ -123,24 +123,24 @@
     "Up": false,
     "Down": true,
     "Left": true,
-    "Right": false
-  },
-  {
-    "Type": "1",
-    "Row": 1,
-    "Column": 4,
-    "Up": false,
-    "Down": false,
-    "Left": true,
     "Right": true
   },
   {
     "Type": "0",
     "Row": 1,
+    "Column": 4,
+    "Up": false,
+    "Down": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 1,
     "Column": 5,
     "Up": false,
-    "Down": true,
-    "Left": false,
+    "Down": false,
+    "Left": true,
     "Right": true
   },
   {
@@ -149,25 +149,25 @@
     "Column": 6,
     "Up": false,
     "Down": false,
-    "Left": true,
-    "Right": false
-  },
-  {
-    "Type": "1",
-    "Row": 1,
-    "Column": 7,
-    "Up": false,
-    "Down": false,
-    "Left": true,
+    "Left": false,
     "Right": true
   },
   {
     "Type": "0",
     "Row": 1,
-    "Column": 8,
+    "Column": 7,
     "Up": false,
     "Down": true,
-    "Left": false,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "X",
+    "Row": 1,
+    "Column": 8,
+    "Up": false,
+    "Down": false,
+    "Left": true,
     "Right": false
   },
   {
@@ -176,7 +176,7 @@
     "Column": 9,
     "Up": false,
     "Down": false,
-    "Left": true,
+    "Left": false,
     "Right": false
   },
   {
@@ -219,16 +219,16 @@
     "Type": "1",
     "Row": 2,
     "Column": 4,
-    "Up": false,
-    "Down": false,
+    "Up": true,
+    "Down": true,
     "Left": true,
-    "Right": true
+    "Right": false
   },
   {
-    "Type": "0",
+    "Type": "1",
     "Row": 2,
     "Column": 5,
-    "Up": true,
+    "Up": false,
     "Down": true,
     "Left": false,
     "Right": false
@@ -238,23 +238,14 @@
     "Row": 2,
     "Column": 6,
     "Up": true,
-    "Down": true,
-    "Left": true,
-    "Right": false
-  },
-  {
-    "Type": "1",
-    "Row": 2,
-    "Column": 7,
-    "Up": false,
-    "Down": true,
+    "Down": false,
     "Left": false,
     "Right": true
   },
   {
     "Type": "0",
     "Row": 2,
-    "Column": 8,
+    "Column": 7,
     "Up": true,
     "Down": true,
     "Left": false,
@@ -263,10 +254,19 @@
   {
     "Type": "1",
     "Row": 2,
+    "Column": 8,
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": false
+  },
+  {
+    "Type": "1",
+    "Row": 2,
     "Column": 9,
     "Up": false,
     "Down": false,
-    "Left": true,
+    "Left": false,
     "Right": false
   },
   {
@@ -303,10 +303,10 @@
     "Up": true,
     "Down": false,
     "Left": true,
-    "Right": false
+    "Right": true
   },
   {
-    "Type": "1",
+    "Type": "0",
     "Row": 3,
     "Column": 4,
     "Up": false,
@@ -318,13 +318,13 @@
     "Type": "0",
     "Row": 3,
     "Column": 5,
-    "Up": true,
-    "Down": false,
-    "Left": false,
-    "Right": true
+    "Up": false,
+    "Down": true,
+    "Left": true,
+    "Right": false
   },
   {
-    "Type": "0",
+    "Type": "1",
     "Row": 3,
     "Column": 6,
     "Up": false,
@@ -336,16 +336,16 @@
     "Type": "0",
     "Row": 3,
     "Column": 7,
-    "Up": false,
+    "Up": true,
     "Down": false,
-    "Left": true,
+    "Left": false,
     "Right": true
   },
   {
     "Type": "0",
     "Row": 3,
     "Column": 8,
-    "Up": true,
+    "Up": false,
     "Down": true,
     "Left": true,
     "Right": false
@@ -399,13 +399,13 @@
     "Type": "1",
     "Row": 4,
     "Column": 4,
-    "Up": false,
+    "Up": true,
     "Down": true,
     "Left": false,
-    "Right": false
+    "Right": true
   },
   {
-    "Type": "1",
+    "Type": "0",
     "Row": 4,
     "Column": 5,
     "Up": true,
@@ -417,9 +417,9 @@
     "Type": "1",
     "Row": 4,
     "Column": 6,
-    "Up": true,
+    "Up": false,
     "Down": true,
-    "Left": false,
+    "Left": true,
     "Right": false
   },
   {
@@ -498,7 +498,7 @@
     "Type": "0",
     "Row": 5,
     "Column": 5,
-    "Up": false,
+    "Up": true,
     "Down": false,
     "Left": true,
     "Right": true
@@ -553,7 +553,7 @@
     "Row": 6,
     "Column": 1,
     "Up": true,
-    "Down": false,
+    "Down": true,
     "Left": false,
     "Right": false
   },
@@ -580,7 +580,7 @@
     "Row": 6,
     "Column": 4,
     "Up": true,
-    "Down": true,
+    "Down": false,
     "Left": true,
     "Right": false
   },
@@ -636,10 +636,10 @@
     "Up": false,
     "Down": false,
     "Left": false,
-    "Right": false
+    "Right": true
   },
   {
-    "Type": "X",
+    "Type": "0",
     "Row": 7,
     "Column": 1,
     "Up": true,
@@ -653,7 +653,7 @@
     "Column": 2,
     "Up": false,
     "Down": false,
-    "Left": false,
+    "Left": true,
     "Right": true
   },
   {
@@ -663,10 +663,10 @@
     "Up": true,
     "Down": false,
     "Left": true,
-    "Right": true
+    "Right": false
   },
   {
-    "Type": "0",
+    "Type": "1",
     "Row": 7,
     "Column": 4,
     "Up": false,
@@ -680,7 +680,7 @@
     "Column": 5,
     "Up": false,
     "Down": false,
-    "Left": true,
+    "Left": false,
     "Right": true
   },
   {
@@ -732,7 +732,7 @@
     "Type": "1",
     "Row": 8,
     "Column": 1,
-    "Up": false,
+    "Up": true,
     "Down": false,
     "Left": false,
     "Right": false
@@ -759,7 +759,7 @@
     "Type": "1",
     "Row": 8,
     "Column": 4,
-    "Up": true,
+    "Up": false,
     "Down": false,
     "Left": false,
     "Right": false

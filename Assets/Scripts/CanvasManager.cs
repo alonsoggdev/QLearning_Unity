@@ -42,7 +42,7 @@ public class CanvasManager : MonoBehaviour
     public Text successfulPathsText;
 
     float defaultLearningRate = 0.2f;
-    float defaultDiscountFactor = 0.9f;
+    float defaultDiscountFactor = 0.99f;
     float defaultGoalAward = 1000f;
     float defaultGiftAward = 150f;
 

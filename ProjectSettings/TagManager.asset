@@ -9,6 +9,10 @@ TagManager:
   - X
   - S
   - G
+  - Down
+  - Up
+  - Left
+  - Right
   layers:
   - Default
   - TransparentFX

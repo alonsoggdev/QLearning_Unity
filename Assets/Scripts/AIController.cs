@@ -67,7 +67,7 @@ public class AIController : MonoBehaviour
 
     [Header("SARSA Parameters")]
     [SerializeField]int episodes    = 10000;
-    [SerializeField]float epsilon   = 0.9f;
+    [SerializeField]float epsilon   = 0.99f;
 
     // Control parameters for saving
     bool save_all_movements = false;
@@ -295,6 +295,8 @@ public class AIController : MonoBehaviour
                     qTable[state, action] = current_q + learning_rate * (reward + discount_factor * next_q - current_q);
                 }
 
+                // m_matrix.set_cell_qvalue(next_row, next_col, qTable[state, action], action); //! Esto sirve para visualizar el valor Q de las celdas, pero al activarlo no funciona bien el algoritmo
+
                 // Update current state and action
                 state = next_state;
                 action = next_action;
@@ -318,7 +320,7 @@ public class AIController : MonoBehaviour
                 yield return new WaitForSeconds(stepDelay); // Delay for visualization
             }
 
-            epsilon = Mathf.Max(0.3f, epsilon -0.001f); // Reduce epsilon pero no menos de 0.1
+            epsilon = Mathf.Max(0.3f, epsilon -0.001f); // Reduce epsilon pero no menos de 0.3
         }
 
         Debug.Log("SARSA training completed.");

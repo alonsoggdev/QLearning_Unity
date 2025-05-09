@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 public class Matrix
@@ -323,6 +324,53 @@ public class Matrix
         mark_cell(row, col, 2);
     }
 
+    public void set_cell_qvalue(int row, int col, float qvalue, int action)
+    {
+        GameObject cell = GameObject.Find($"{row}-{col}");
+        if (cell == null)
+        {
+            Debug.LogError($"No se encontró la celda en la posición ({row}, {col})");
+            return;
+        }
+
+        string actionTag = action switch
+        {
+            0 => "Up",
+            1 => "Down",
+            2 => "Left",
+            3 => "Right",
+            _ => throw new ArgumentOutOfRangeException(nameof(action), "Acción no válida")
+        };
+
+        Transform text = null;
+
+        foreach (Transform child in cell.transform)
+        {
+            if (child.CompareTag(actionTag))
+            {
+                text = child;
+                break;
+            }
+        }
+
+        if (text == null)
+        {
+            Debug.LogError($"No se encontró el texto para la acción {actionTag} en la celda ({row}, {col})");
+            return;
+        }
+
+        TextMeshPro textMesh = text.gameObject.GetComponent<TextMeshPro>();
+
+        if (textMesh != null)
+        {
+            textMesh.text = qvalue.ToString("F2");
+        }
+        else
+        {
+            Debug.LogError($"No se encontró el componente TextMesh en la celda ({row}, {col})");
+        }
+    }
+
     public void mark_cell_as_checked(int row, int col)
     {
         mark_cell(row, col, 1);
@@ -365,7 +413,8 @@ public class Matrix
 
         if (row >= 0 && row < m_rows && col >= 0 && col < m_columns)
         {
-            SpriteRenderer spriteRenderer = cell.GetComponent<SpriteRenderer>();
+            GameObject cellSprite = cell.transform.Find("Square").gameObject;
+            SpriteRenderer spriteRenderer = cellSprite.GetComponent<SpriteRenderer>();
             if (spriteRenderer != null)
             {
                 switch (type)
