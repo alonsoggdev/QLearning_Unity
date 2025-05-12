@@ -169,7 +169,6 @@ public class AIController : MonoBehaviour
                     int success_step = steps + 1;
                     success_episodes.Add(success_episode);
                     success_steps.Add(success_step);
-                    canvasManager.set_successful_paths_text(success_episodes.Count);
                 }
 
                 // Actualiza el estado actual
@@ -279,7 +278,6 @@ public class AIController : MonoBehaviour
                     int success_step = steps + 1;
                     success_episodes.Add(success_episode);
                     success_steps.Add(success_step);
-                    canvasManager.set_successful_paths_text(success_episodes.Count);
                 }
 
                 int next_action = epsilon_greedy_action(next_state, epsilon);
@@ -735,7 +733,6 @@ public class AIController : MonoBehaviour
         clean_qTable();
         m_matrix.reset_cells_color();
         m_matrix.reset_to_starting_cell(current_position, 0, 0);
-        canvasManager.set_successful_paths_text(0);
         canvasManager.set_step_text(0, 0);
         canvasManager.set_episode_text(0, 0);
         success_episodes.Clear();

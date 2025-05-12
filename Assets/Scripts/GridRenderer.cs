@@ -40,7 +40,7 @@ public class GridRenderer : MonoBehaviour
         }
 
         this.transform.localScale = Vector3.one * 0.8f;
-        this.transform.position = new Vector3(-2, -0.5f, 0);
+        this.transform.position = new Vector3(-2, 0, 0);
 
     }
 

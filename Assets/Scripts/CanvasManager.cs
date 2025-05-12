@@ -39,7 +39,6 @@ public class CanvasManager : MonoBehaviour
     [Header("Texts")]
     public Text episodeText;
     public Text stepText;
-    public Text successfulPathsText;
 
     float defaultLearningRate = 0.2f;
     float defaultDiscountFactor = 0.99f;
@@ -138,10 +137,5 @@ public class CanvasManager : MonoBehaviour
     public void set_step_text(int step, int maxSteps)
     {
         stepText.text = $"{step} / {maxSteps}";
-    }
-
-    public void set_successful_paths_text(int successfulPaths)
-    {
-        successfulPathsText.text = $"{successfulPaths}";
     }
 }
