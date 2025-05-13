@@ -28,6 +28,8 @@ public class CanvasManager : MonoBehaviour
 
     public float minGoalAward = 0;
     public float maxGoalAward = 0;
+    public float minMovementAward = 0;
+    public float maxMovementAward = 0;
 
     public float minGiftAward = 0;
     public float maxGiftAward = 0;
@@ -44,6 +46,7 @@ public class CanvasManager : MonoBehaviour
     float defaultDiscountFactor = 0.99f;
     float defaultGoalAward = 1000f;
     float defaultGiftAward = 150f;
+    float defaultMovementAward = -1.0f;
 
     void Start()
     {
@@ -64,6 +67,7 @@ public class CanvasManager : MonoBehaviour
         discountFactor.text = defaultDiscountFactor.ToString();
         goalAward.text = defaultGoalAward.ToString();
         giftAward.text = defaultGiftAward.ToString();
+        movementAward.text = defaultMovementAward.ToString();
 
         algorithmDropdown.value = 0;
     }
@@ -73,9 +77,10 @@ public class CanvasManager : MonoBehaviour
         bool isValid1 = ValidateAndColor(learningRate, minLearningRate, maxLearningRate);
         bool isValid2 = ValidateAndColor(discountFactor, minDiscountFactor, maxDiscountFactor);
         bool isValid3 = ValidateAndColor(goalAward, minGoalAward, maxGoalAward);
+        bool isValid4 = ValidateAndColor(movementAward, minMovementAward, maxMovementAward);
         bool isValid5 = ValidateAndColor(giftAward, minGiftAward, maxGiftAward);
 
-        return isValid1 && isValid2 && isValid3 && isValid5;
+        return isValid1 && isValid2 && isValid3 && isValid4 && isValid5;
     }
 
     private bool ValidateAndColor(InputField inputField, float min, float max)
@@ -119,7 +124,8 @@ public class CanvasManager : MonoBehaviour
                 float.Parse(learningRate.text),
                 float.Parse(discountFactor.text),
                 float.Parse(goalAward.text),
-                float.Parse(giftAward.text)
+                float.Parse(giftAward.text),
+                float.Parse(movementAward.text)
             );
             gameManager.ExecuteAI(algorithmDropdown.value);
         }

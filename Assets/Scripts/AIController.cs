@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
 using UnityEngine;
+
+
+using DebugLog = UnityEngine.Debug;
 
 public class AIController : MonoBehaviour
 {
@@ -95,7 +99,7 @@ public class AIController : MonoBehaviour
         canvasManager = FindObjectOfType<CanvasManager>();
         if (canvasManager == null)
         {
-            Debug.LogError("CanvasManager not found in the scene.");
+            DebugLog.LogError("CanvasManager not found in the scene.");
         }
     }
 
@@ -106,6 +110,9 @@ public class AIController : MonoBehaviour
 
     System.Collections.IEnumerator QLearning_Coroutine()
     {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         set_matrix();
 
         initialize_qtable();
@@ -118,8 +125,8 @@ public class AIController : MonoBehaviour
         goal_position = m_matrix.get_goal();
         current_position = new int[2] { start_position[0], start_position[1] };
 
-        Debug.Log("Start position: " + start_position[0] + ", " + start_position[1]);
-        Debug.Log("Goal position: " + goal_position[0] + ", " + goal_position[1]);
+        DebugLog.Log("Start position: " + start_position[0] + ", " + start_position[1]);
+        DebugLog.Log("Goal position: " + goal_position[0] + ", " + goal_position[1]);
 
         for (int e = 0; e < episodes; e++)
         {
@@ -196,19 +203,23 @@ public class AIController : MonoBehaviour
             epsilon = Mathf.Max(0.3f, epsilon * 0.99f); // Reduce epsilon pero no menos de 0.1
         }
 
-        Debug.Log("Q-Learning training completed.");
+        DebugLog.Log("Q-Learning training completed.");
 
         if (success_episodes.Count > 0)
         {
-            Debug.Log("Successful paths found: " + success_episodes.Count);
+            DebugLog.Log("Successful paths found: " + success_episodes.Count);
         }
         else
         {
-            Debug.Log("No successful paths found.");
+            DebugLog.Log("No successful paths found.");
         }
 
         // Guarda la Q-Table final
         save_qTable();
+
+        stopwatch.Stop();
+
+        DebugLog.Log("Q-Learning completed in " + stopwatch.Elapsed.TotalSeconds + " seconds.");
 
         // Demuestra el camino aprendido
         demonstrate_learned_path(m_matrix.get_board());
@@ -216,6 +227,9 @@ public class AIController : MonoBehaviour
 
     System.Collections.IEnumerator SARSA_Coroutine()
     {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+
         set_matrix();
 
         initialize_qtable();
@@ -228,8 +242,8 @@ public class AIController : MonoBehaviour
         goal_position  = m_matrix.get_goal();
         current_position = new int[2] { start_position[0], start_position[1] };
 
-        Debug.Log("Start position: " + start_position[0] + ", " + start_position[1]);
-        Debug.Log("Goal position: " + goal_position[0] + ", " + goal_position[1]);
+        DebugLog.Log("Start position: " + start_position[0] + ", " + start_position[1]);
+        DebugLog.Log("Goal position: " + goal_position[0] + ", " + goal_position[1]);
 
         for (int e = 0; e < episodes; e++)
         {
@@ -263,7 +277,7 @@ public class AIController : MonoBehaviour
                 {
                     if (detect_loop(state, next_state) == true)
                     {
-                        // Debug.Log("Ciclo infinito detectado. Finalizando episodio.");
+                        // DebugLog.Log("Ciclo infinito detectado. Finalizando episodio.");
                         done = true;
                         break;
                     }
@@ -321,20 +335,23 @@ public class AIController : MonoBehaviour
             epsilon = Mathf.Max(0.3f, epsilon -0.001f); // Reduce epsilon pero no menos de 0.3
         }
 
-        Debug.Log("SARSA training completed.");
+        DebugLog.Log("SARSA training completed.");
 
         if (success_episodes.Count > 0)
         {
-            Debug.Log("Successful paths found: " + success_episodes.Count);
+            DebugLog.Log("Successful paths found: " + success_episodes.Count);
             // print_successful_paths();
         }
         else
         {
-            Debug.Log("No successful paths found.");
+            DebugLog.Log("No successful paths found.");
         }
 
         // Save the final Q-table
         save_qTable();
+
+        stopwatch.Stop();
+        DebugLog.Log("SARSA completed in " + stopwatch.Elapsed.TotalSeconds + " seconds.");
 
         // Demonstrate the learned path
         demonstrate_learned_path(m_matrix.get_board());
@@ -373,7 +390,7 @@ public class AIController : MonoBehaviour
     {
         for (int i = 0; i < success_episodes.Count; i++)
         {
-            Debug.Log($"Episode: {success_episodes[i]}, Steps: {success_steps[i]}");
+            DebugLog.Log($"Episode: {success_episodes[i]}, Steps: {success_steps[i]}");
         }
     }
 
@@ -453,7 +470,7 @@ public class AIController : MonoBehaviour
         // Validate indices
         if (potential_next_row < 0 || potential_next_row >= m_rows || potential_next_col < 0 || potential_next_col >= m_columns)
         {
-            Debug.LogError($"Índices fuera de rango: ({potential_next_row}, {potential_next_col})");
+            DebugLog.LogError($"Índices fuera de rango: ({potential_next_row}, {potential_next_col})");
             return -1; // Penalización por intentar moverse fuera de los límites
         }
 
@@ -466,13 +483,13 @@ public class AIController : MonoBehaviour
             {
                 // Hit a wall - stay in current position
                 hit_wall = true;
-                // Debug.Log($"El agente chocó con una pared en ({current_position[0]}, {current_position[1]}) al intentar hacer la accion {action_to_string(action)}.");
+                // DebugLog.Log($"El agente chocó con una pared en ({current_position[0]}, {current_position[1]}) al intentar hacer la accion {action_to_string(action)}.");
             }
             else
             {
                 next_row = potential_next_row;
                 next_col = potential_next_col;
-                // Debug.Log($"El agente se movió de ({current_position[0]}, {current_position[1]}) a ({potential_next_row}, {potential_next_col}) al hacer la accion {action_to_string(action)}.");
+                // DebugLog.Log($"El agente se movió de ({current_position[0]}, {current_position[1]}) a ({potential_next_row}, {potential_next_col}) al hacer la accion {action_to_string(action)}.");
                 if (cell_content == 'G')
                 {
                     // Found a gift - move to that position
@@ -516,13 +533,13 @@ public class AIController : MonoBehaviour
         else if (next_row == current_position[0] && next_col == current_position[1] && !hit_wall)
         {
             reward = -5; // Couldn't move (other reason)
-            Debug.Log($"El agente no pudo moverse desde ({current_position[0]}, {current_position[1]}).");
+            DebugLog.Log($"El agente no pudo moverse desde ({current_position[0]}, {current_position[1]}).");
         }
         else
         {
             reward = movement_award; // Standard move reward
         }
-        // Debug.Log("Step " + (step + 1) + " - Action: " + action_to_string(action) + " - Reward: " + reward + " - Position: (" + next_row + ", " + next_col + ")" + "epsilon: " + epsilon);
+        // DebugLog.Log("Step " + (step + 1) + " - Action: " + action_to_string(action) + " - Reward: " + reward + " - Position: (" + next_row + ", " + next_col + ")" + "epsilon: " + epsilon);
         return reward;
     }
 
@@ -559,11 +576,11 @@ public class AIController : MonoBehaviour
                     }
                 }
             }
-            Debug.Log("Q-Table saved to QTable.txt");
+            DebugLog.Log("Q-Table saved to QTable.txt");
         }
         catch (Exception ex)
         {
-            Debug.Log("Error saving Q-Table: " + ex.Message);
+            DebugLog.Log("Error saving Q-Table: " + ex.Message);
         }
     }
 
@@ -573,48 +590,48 @@ public class AIController : MonoBehaviour
         switch (action)
         {
             case 0:
-                // Debug.Log("Action: Up");
+                // DebugLog.Log("Action: Up");
                 if (m_matrix.get_board()[currentRow - 1, currentCol] == '1')
                 {
                     result = false; // Invalid action
                 }
                 break;
             case 1:
-                // Debug.Log("Action: Down");
+                // DebugLog.Log("Action: Down");
                 if (m_matrix.get_board()[currentRow + 1, currentCol] == '1')
                 {
                     result = false; // Invalid action
                 }
                 break;
             case 2:
-                // Debug.Log("Action: Left");
+                // DebugLog.Log("Action: Left");
                 if (m_matrix.get_board()[currentRow, currentCol - 1] == '1')
                 {
                     result = false; // Invalid action
                 }
                 break;
             case 3:
-                // Debug.Log("Action: Right");
+                // DebugLog.Log("Action: Right");
                 if (m_matrix.get_board()[currentRow, currentCol + 1] == '1')
                 {
                     result = false; // Invalid action
                 }
                 break;
             default:
-                Debug.LogError("Invalid action");
+                DebugLog.LogError("Invalid action");
                 result = false;
                 break;
         }
 
         return result;
-        // Debug.Log($"Next position: ({nextRow}, {nextCol})");
+        // DebugLog.Log($"Next position: ({nextRow}, {nextCol})");
     }
 
     private void demonstrate_learned_path(char[,] board)
     {
         clear_zeros_in_qtable();
 
-        Debug.Log("Demonstrating learned path...");
+        DebugLog.Log("Demonstrating learned path...");
 
         m_matrix.reset_cells_color();
 
@@ -649,7 +666,7 @@ public class AIController : MonoBehaviour
             
             float action_reward = take_action(m_matrix.get_board(), best_action, out int next_row, out int next_col, true, steps);
 
-            // Debug.Log("Moved from (" + current_position[0] + ", " + current_position[1] + ") to (" + next_row + ", " + next_col + ")");
+            // DebugLog.Log("Moved from (" + current_position[0] + ", " + current_position[1] + ") to (" + next_row + ", " + next_col + ")");
 
             current_position = new int[] { next_row, next_col };
 
@@ -658,7 +675,7 @@ public class AIController : MonoBehaviour
             // Check if reached goal
             if (current_position[0] == goal_position[0] && current_position[1] == goal_position[1])
             {
-                Debug.Log("Goal reached!");
+                DebugLog.Log("Goal reached!");
                 reached_goal = true;
                 break;
             }
@@ -673,7 +690,7 @@ public class AIController : MonoBehaviour
 
         if (!reached_goal)
         {
-            Debug.Log("Failed to reach the goal within the maximum number of steps.");
+            DebugLog.Log("Failed to reach the goal within the maximum number of steps.");
         }
     }
 

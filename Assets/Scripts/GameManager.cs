@@ -35,13 +35,14 @@ public class GameManager : MonoBehaviour
         AIController.Reset();
     }
 
-    public void SetAlgorithmValues(int algorithm, float learningRate, float discountFactor, float goalAward, float giftAward)
+    public void SetAlgorithmValues(int algorithm, float learningRate, float discountFactor, float goalAward, float giftAward, float movementAward)
     {
         AIController.set_algorithm(algorithm);
         AIController.set_learning_rate(learningRate);
         AIController.set_discount_factor(discountFactor);
         AIController.set_goal_award(goalAward);
         AIController.set_gift_award(giftAward);
+        AIController.set_movement_award(movementAward);
     }
 
     public void ExecuteAI(int algorithm)
